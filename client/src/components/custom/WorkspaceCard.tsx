@@ -1,0 +1,53 @@
+import { Badge } from "@/components/ui/badge"
+import {
+  Card
+} from "@/components/ui/card"
+import Image from "next/image";
+
+export default function WorkspaceCard({
+  coverImage,
+  title,
+  tag,
+}: {
+  coverImage: string;
+  title: string;
+  tag: string;
+}) {
+  return (
+    <Card className="w-60 overflow-hidden shadow-md">
+      
+      {/* Image Section */}
+      <div className="relative h-28 w-full">
+        <Image
+          src={coverImage}
+          fill
+          alt="Event cover"
+          className="object-cover brightness-75"
+        />
+        <div className="absolute inset-0 bg-black/30" />
+        <Badge
+          variant="secondary"
+          className="absolute top-1 left-1 z-10 text-xs px-2 py-0.5"
+        >
+          {tag}
+        </Badge>
+      </div>
+
+      {/* Content Section */}
+      <div className="px-2 py-1">
+        <h3 className="text-sm font-semibold leading-tight">
+          {title}
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          Gaurav Raut
+        </p>
+      </div>
+
+    </Card>
+  );
+}
+
+
+WorkspaceCard.defaultProps = {
+    coverImage: "/logo.png",
+}
