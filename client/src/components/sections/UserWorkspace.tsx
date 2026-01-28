@@ -1,29 +1,9 @@
 import WorkspaceCard from "@/components/custom/WorkspaceCard";
+import NewBoardCard from "@/components/custom/newBoardCard";
+import type { userBoards as UserBoardsType } from "@/utils/types";
 
-const userBoards = [
-    {
-        coverImage: "/vercel.svg",
-        title: "Marketing Team",
-        tag: "Marketing",
-    },
-    {
-        coverImage: "/logo.png",
-        title: "Product Team",
-        tag: "Product",
-    },
-    {
-        coverImage: "/logo.png",
-        title: "Design Team",
-        tag: "Design",
-    },
-    {
-        coverImage: "/vercel.svg",
-        title: "Development Team",
-        tag: "Development",
-    }
-];
 
-export default function UserWorkspace() {
+export default function UserWorkspace({userBoards}: {userBoards: UserBoardsType}) {
     
     return (
         <section className="mt-8">
@@ -43,6 +23,7 @@ export default function UserWorkspace() {
                             />
                     ))
                 }
+                <NewBoardCard />
             </div>
         </div>
         </section>

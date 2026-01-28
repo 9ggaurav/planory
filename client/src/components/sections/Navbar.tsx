@@ -7,6 +7,26 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field"
+
+
 const navLinks = [
   { name: "Dashboard", href: "#" },
   { name: "Projects", href: "#" },
@@ -59,10 +79,51 @@ export default function NavBar() {
               />
               {/* <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} /> */}
             </div>
-          </div>  
-          <Button className="hidden md:block bg-blue-600 text-white hover:bg-blue-700">
-            Create
-          </Button>
+          </div>
+          <Dialog>
+            <form>
+              <DialogTrigger asChild>
+                <Button className="hidden hover:cursor-pointer md:block bg-blue-600 text-white hover:bg-blue-700">
+                  Create
+                </Button>
+              </DialogTrigger>
+                      <DialogContent className="sm:max-w-106.25">
+          <DialogHeader>
+            <DialogTitle>Create Board</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-3">
+              <Label htmlFor="title">Title</Label>
+              <Input required id="title" name="title" defaultValue="Product Design" />
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="tag">Tag</Label>
+              <Input required id="tag" name="tag" defaultValue="Software" />
+            </div>
+            <div className="grid gap-3">
+              <FieldLabel>
+        <Field orientation="horizontal">
+          <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
+          <FieldContent>
+            <FieldTitle>Publish Board</FieldTitle>
+            <FieldDescription>
+              Make this board public so that others can see it too.
+            </FieldDescription>
+          </FieldContent>
+        </Field>
+      </FieldLabel>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+
+            </form>
+          </Dialog>  
         </div>
 
         <div>

@@ -1,29 +1,8 @@
 import WorspaceCard from "@/components/custom/WorkspaceCard";
+import type {userBoards as userBoardsType} from "@/utils/types";
 
-const publicBoards = [
-    {
-        coverImage: "/vercel.svg",
-        title: "Marketing Team",
-        tag: "Marketing",
-    },
-    {
-        coverImage: "/logo.png",
-        title: "Product Team",
-        tag: "Product",
-    },
-    {
-        coverImage: "/logo.png",
-        title: "Design Team",
-        tag: "Design",
-    },
-    {
-        coverImage: "/vercel.svg",
-        title: "Development Team",
-        tag: "Development",
-    }
-];
 
-export default function PublicBoards() {
+export default function PublicBoards({publicBoards}: {publicBoards: userBoardsType}) {
     return (
         <section className="mt-8">
             <div>
