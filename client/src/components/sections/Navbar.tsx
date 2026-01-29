@@ -6,6 +6,7 @@ import { Menu, X, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+// import type { userBoard as BoardType } from '@/utils/types';
 
 import {
   Dialog,
@@ -17,7 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
+// import { Checkbox } from "@/components/ui/checkbox"
 import {
   Field,
   FieldContent,
@@ -36,6 +37,9 @@ const navLinks = [
 
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+
   return (
     <nav className='bg-white mx-auto shadow-md box-border'>
       <div className="w-full py-1 flex justify-around items-center">
@@ -80,8 +84,8 @@ export default function NavBar() {
               {/* <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} /> */}
             </div>
           </div>
-          <Dialog>
-            <form>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <form >
               <DialogTrigger asChild>
                 <Button className="hidden hover:cursor-pointer md:block bg-blue-600 text-white hover:bg-blue-700">
                   Create
@@ -94,7 +98,7 @@ export default function NavBar() {
           <div className="grid gap-4">
             <div className="grid gap-3">
               <Label htmlFor="title">Title</Label>
-              <Input required id="title" name="title" defaultValue="Product Design" />
+              <Input required id="title" name="title"  defaultValue="Product Design" />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="tag">Tag</Label>
@@ -103,7 +107,7 @@ export default function NavBar() {
             <div className="grid gap-3">
               <FieldLabel>
         <Field orientation="horizontal">
-          <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
+          <Input className='size-[0.9rem]' type='checkbox' id="checkbox" name="checkbox" />
           <FieldContent>
             <FieldTitle>Publish Board</FieldTitle>
             <FieldDescription>
@@ -118,7 +122,7 @@ export default function NavBar() {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit">Create</Button>
           </DialogFooter>
         </DialogContent>
 

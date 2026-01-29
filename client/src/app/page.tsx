@@ -1,9 +1,15 @@
+"use client";
+
 import Container from "@/components/custom/Container";
 import PublicBoards from "@/components/sections/HomePublic";
 import Navbar from "@/components/sections/Navbar";
 import UserWorkspace from "@/components/sections/UserWorkspace";
+import { useState } from "react";
+import type { userBoard as BoardType } from "@/utils/types";
 
-const userBoards = [
+
+export default function Home() {
+  const [Boards, setBoards] = useState<BoardType[]>([
     {
         coverImage: "/vercel.svg",
         title: "Marketing Team",
@@ -13,26 +19,19 @@ const userBoards = [
         coverImage: "/logo.png",
         title: "Product Team",
         tag: "Product",
-    },
-    {
-        coverImage: "/logo.png",
-        title: "Design Team",
-        tag: "Design",
-    },
-    {
-        coverImage: "/vercel.svg",
-        title: "Developmmment Team",
-        tag: "Development",
     }
-];
+  ]);
 
-export default function Home() {
+  // const handleAddBoard = (newBoard: BoardType) => {
+  //   setBoards([...Boards, newBoard]);
+  // }
+
   return (
     <>
       <Navbar />
       <Container>
-        <PublicBoards publicBoards={userBoards} />
-        <UserWorkspace userBoards={userBoards} />
+        <PublicBoards publicBoards={Boards} />
+        <UserWorkspace userBoards={Boards} />
       </Container>
     </>
   );

@@ -1,9 +1,9 @@
 import WorkspaceCard from "@/components/custom/WorkspaceCard";
 import NewBoardCard from "@/components/custom/newBoardCard";
-import type { userBoards as UserBoardsType } from "@/utils/types";
+import type { userBoard as UserBoardType } from "@/utils/types";
 
 
-export default function UserWorkspace({userBoards}: {userBoards: UserBoardsType}) {
+export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]}) {
     
     return (
         <section className="mt-8">
@@ -20,6 +20,7 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardsType}
                             coverImage={board.coverImage}
                             title={board.title}
                             tag={board.tag}
+                            
                             />
                     ))
                 }
