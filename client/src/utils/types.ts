@@ -1,6 +1,8 @@
 export type userBoard = {
+    id?: string;
     coverImage: string;
     title: string;
     tag: string;
-    checked?: boolean;
+    isPublic?: boolean;
+    creator?: string;
 };

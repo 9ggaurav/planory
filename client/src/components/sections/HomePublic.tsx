@@ -17,6 +17,7 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
                             coverImage={board.coverImage}
                             title={board.title}
                             tag={board.tag}
+                            creator={board.creator}
                         />
                     ))}
                 </div>

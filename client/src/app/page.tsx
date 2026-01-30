@@ -22,13 +22,14 @@ export default function Home() {
     }
   ]);
 
-  // const handleAddBoard = (newBoard: BoardType) => {
-  //   setBoards([...Boards, newBoard]);
-  // }
+  const handleAddBoard = (newBoard: BoardType) => {
+    setBoards([...Boards, newBoard]);
+    console.log("Board added to Home:", Boards);
+  }
 
   return (
     <>
-      <Navbar />
+      <Navbar onAddBoard = {handleAddBoard}/>
       <Container>
         <PublicBoards publicBoards={Boards} />
         <UserWorkspace userBoards={Boards} />

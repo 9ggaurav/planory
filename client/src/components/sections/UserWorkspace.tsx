@@ -20,11 +20,12 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
                             coverImage={board.coverImage}
                             title={board.title}
                             tag={board.tag}
+                            creator={board.creator}
                             
                             />
                     ))
                 }
-                <NewBoardCard />
+                {/* <NewBoardCard /> */}
             </div>
         </div>
         </section>

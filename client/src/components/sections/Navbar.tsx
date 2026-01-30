@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -6,7 +5,7 @@ import { Menu, X, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-// import type { userBoard as BoardType } from '@/utils/types';
+import type { userBoard as BoardType } from '@/utils/types';
 
 import {
   Dialog,
@@ -35,10 +34,48 @@ const navLinks = [
   { name: "Account", href: "#" },
 ];
 
-export default function NavBar() {
+export default function NavBar({onAddBoard}: {onAddBoard?: (newBoard: BoardType) => void}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [boardData, setBoardData] = useState<BoardType>({
+    coverImage: "",
+    title: "",
+    tag: "",
+    isPublic: false,
+  });
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setBoardData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // Use FormData to get current input values directly
+    // const formData = new FormData(e.currentTarget);
+    
+    const newBoard: BoardType = {
+      coverImage: boardData.coverImage || "/logo.png",
+      title: boardData.title,
+      tag: boardData.tag,
+      isPublic: boardData.isPublic,
+      creator: "currentUser", // Replace with actual current user identifier
+    };
+
+    console.log("New Board Created:", newBoard);
+
+    if (onAddBoard) {
+      onAddBoard(newBoard);
+    }
+
+    setIsDialogOpen(false);
+    setBoardData({ coverImage: "", title: "", tag: "", isPublic: false });
+    e.currentTarget.reset();
+  }
 
   return (
     <nav className='bg-white mx-auto shadow-md box-border'>
@@ -84,50 +121,51 @@ export default function NavBar() {
               {/* <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} /> */}
             </div>
           </div>
+          {/* {} */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <form >
-              <DialogTrigger asChild>
-                <Button className="hidden hover:cursor-pointer md:block bg-blue-600 text-white hover:bg-blue-700">
-                  Create
-                </Button>
-              </DialogTrigger>
-                      <DialogContent className="sm:max-w-106.25">
-          <DialogHeader>
-            <DialogTitle>Create Board</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="title">Title</Label>
-              <Input required id="title" name="title"  defaultValue="Product Design" />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="tag">Tag</Label>
-              <Input required id="tag" name="tag" defaultValue="Software" />
-            </div>
-            <div className="grid gap-3">
-              <FieldLabel>
-        <Field orientation="horizontal">
-          <Input className='size-[0.9rem]' type='checkbox' id="checkbox" name="checkbox" />
-          <FieldContent>
-            <FieldTitle>Publish Board</FieldTitle>
-            <FieldDescription>
-              Make this board public so that others can see it too.
-            </FieldDescription>
-          </FieldContent>
-        </Field>
-      </FieldLabel>
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Create</Button>
-          </DialogFooter>
-        </DialogContent>
-
-            </form>
-          </Dialog>  
+  <DialogTrigger asChild>
+    <Button className="hidden hover:cursor-pointer md:block bg-blue-600 text-white hover:bg-blue-700">
+      Create
+    </Button>
+  </DialogTrigger>
+  
+  <DialogContent className="sm:max-w-106.25">
+    <form onSubmit={handleSubmit}>
+      <DialogHeader>
+        <DialogTitle>Create Board</DialogTitle>
+      </DialogHeader>
+      <div className="grid gap-4">
+        <div className="grid gap-3">
+          <Label htmlFor="title">Title</Label>
+          <Input required id="title" name="title" value={boardData.title} onChange={handleChange} />
+        </div>
+        <div className="grid gap-3">
+          <Label htmlFor="tag">Tag</Label>
+          <Input required id="tag" name="tag" value={boardData.tag} onChange={handleChange} />
+        </div>
+        <div className="grid gap-3">
+          <FieldLabel>
+            <Field orientation="horizontal">
+              <Input className='size-[0.9rem]' type='checkbox' id="checkbox" name="isPublic" checked={boardData.isPublic} onChange={handleChange} />
+              <FieldContent>
+                <FieldTitle>Publish Board</FieldTitle>
+                <FieldDescription>
+                  Make this board public so that others can see it too.
+                </FieldDescription>
+              </FieldContent>
+            </Field>
+          </FieldLabel>
+        </div>
+      </div>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="outline">Cancel</Button>
+        </DialogClose>
+        <Button type="submit">Create</Button>
+      </DialogFooter>
+    </form>
+  </DialogContent>
+</Dialog>
         </div>
 
         <div>

@@ -8,10 +8,12 @@ export default function WorkspaceCard({
   coverImage,
   title,
   tag,
+  creator,
 }: {
   coverImage: string;
   title: string;
   tag: string;
+  creator?: string;
 }) {
   return (
     <Card className="w-60 overflow-hidden shadow-md">
@@ -39,7 +41,7 @@ export default function WorkspaceCard({
           {title}
         </h3>
         <p className="text-xs text-muted-foreground">
-          Gaurav Raut
+          {creator}
         </p>
       </div>
 
