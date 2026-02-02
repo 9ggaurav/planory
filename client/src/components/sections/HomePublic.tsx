@@ -13,6 +13,7 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
                 <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                     {publicBoards.map((board, index) => (
                         <WorspaceCard
+                            id={board.id}
                             key={index}
                             coverImage={board.coverImage}
                             title={board.title}

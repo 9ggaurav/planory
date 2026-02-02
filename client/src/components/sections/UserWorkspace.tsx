@@ -1,5 +1,5 @@
 import WorkspaceCard from "@/components/custom/WorkspaceCard";
-import NewBoardCard from "@/components/custom/newBoardCard";
+// import NewBoardCard from "@/components/custom/newBoardCard";
 import type { userBoard as UserBoardType } from "@/utils/types";
 
 
@@ -16,6 +16,7 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
                 {
                     userBoards.map((board, index) => (
                         <WorkspaceCard
+                            id={board.id}
                             key={index}
                             coverImage={board.coverImage}
                             title={board.title}

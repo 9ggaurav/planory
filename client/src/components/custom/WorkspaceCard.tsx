@@ -3,20 +3,24 @@ import {
   Card
 } from "@/components/ui/card"
 import Image from "next/image";
+import Link from "next/link";
 
 export default function WorkspaceCard({
   coverImage,
   title,
   tag,
   creator,
+  id
 }: {
   coverImage: string;
   title: string;
   tag: string;
   creator?: string;
+  id: string | undefined;
 }) {
   return (
-    <Card className="w-60 overflow-hidden shadow-md">
+    <Link href={`/b/${id}`}>
+      <Card className="w-60 overflow-hidden shadow-md">
       
       {/* Image Section */}
       <div className="relative h-28 w-full">
@@ -46,6 +50,8 @@ export default function WorkspaceCard({
       </div>
 
     </Card>
+    </Link>
+    
   );
 }
 

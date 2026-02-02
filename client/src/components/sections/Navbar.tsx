@@ -59,6 +59,7 @@ export default function NavBar({onAddBoard}: {onAddBoard?: (newBoard: BoardType)
     // const formData = new FormData(e.currentTarget);
     
     const newBoard: BoardType = {
+      id: crypto.randomUUID(),
       coverImage: boardData.coverImage || "/logo.png",
       title: boardData.title,
       tag: boardData.tag,
