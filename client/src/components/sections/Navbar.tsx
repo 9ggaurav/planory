@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import type { userBoard as BoardType } from '@/utils/types';
+import {useBoards} from "@/app/providers/BoardContext"
 
 import {
   Dialog,
@@ -34,7 +35,8 @@ const navLinks = [
   { name: "Account", href: "#" },
 ];
 
-export default function NavBar({onAddBoard}: {onAddBoard?: (newBoard: BoardType) => void}) {
+export default function NavBar() {
+  const { addBoard } = useBoards();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [boardData, setBoardData] = useState<BoardType>({
@@ -55,27 +57,25 @@ export default function NavBar({onAddBoard}: {onAddBoard?: (newBoard: BoardType)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Use FormData to get current input values directly
-    // const formData = new FormData(e.currentTarget);
-    
+    if (!boardData.title || !boardData.tag) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
     const newBoard: BoardType = {
       id: crypto.randomUUID(),
       coverImage: boardData.coverImage || "/logo.png",
       title: boardData.title,
       tag: boardData.tag,
-      isPublic: boardData.isPublic,
-      creator: "currentUser", // Replace with actual current user identifier
+      isPublic: boardData.isPublic || false,
+      creator: "currentUser",
     };
 
-    console.log("New Board Created:", newBoard);
-
-    if (onAddBoard) {
-      onAddBoard(newBoard);
-    }
-
-    setIsDialogOpen(false);
+    addBoard(newBoard);
+    
+    // Reset form state
     setBoardData({ coverImage: "", title: "", tag: "", isPublic: false });
-    e.currentTarget.reset();
+    setIsDialogOpen(false);
   }
 
   return (
@@ -111,7 +111,7 @@ export default function NavBar({onAddBoard}: {onAddBoard?: (newBoard: BoardType)
         </div>
 
         <div className='flex justify-around gap-2'>
-          <Search className='md:hidden' />
+          {/* <Search className='sm:hidden' /> */}
           <div className="hidden lg:flex lg:items-center lg:space-x-4">
             <div className="relative">
               <Input
