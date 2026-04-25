@@ -10,7 +10,7 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
                 <p className="text-muted-foreground">Explore boards shared by the community</p>
             </div>
             <div>
-                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+                <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                     {publicBoards.map((board, index) => (
                         board.isPublic &&
                         <WorspaceCard

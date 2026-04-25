@@ -60,7 +60,7 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="bg-white mx-auto shadow-md box-border">
+    <nav className="bg-white mx-auto box-border py-1">
       <div className="w-full py-1 flex justify-around items-center">
         <div className="max-w-15 flex items-center justify-between px-4">
           <Image src="/logo.png" alt="Logo" width={40} height={40} className="object-contain" />

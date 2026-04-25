@@ -19,8 +19,8 @@ export default function WorkspaceCard({
   id: string | undefined;
 }) {
   return (
-    <Link href={`/b/${id}`}>
-      <Card className="w-60 overflow-hidden shadow-md">
+    <Link draggable={true} href={`/b/${id}`}>
+      <Card className="w-54 h-40 overflow-hidden shadow-md">
       
       {/* Image Section */}
       <div className="relative h-28 w-full">
