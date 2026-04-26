@@ -20,6 +20,7 @@ export default function InboxBoardNavbar() {
 
                         <TooltipContent className="bg-neutral-50 text-neutral-950" side="bottom">
                             <p>Sort</p>
+                        
                         </TooltipContent>
                     </Tooltip>
                     <div className="hover:cursor-pointer p-2 hover:bg-white/40 mb-2">
