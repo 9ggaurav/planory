@@ -60,12 +60,26 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="bg-white mx-auto box-border py-1">
+    <nav className="bg-[#2D5C4F] text-white mx-auto box-border py-1">
       <div className="w-full py-1 flex justify-around items-center">
         <div className="max-w-15 flex items-center justify-between px-4">
           <Image src="/logo.png" alt="Logo" width={40} height={40} className="object-contain" />
 
-          <h1 className="text-1xl font-extrabold">TaskFlow</h1>
+          <h1 className="text-1xl font-extrabold">PLANA</h1>
+        </div>
+
+
+        <div className="flex justify-around gap-2">
+          <div className="hidden lg:flex lg:items-center lg:space-x-4">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search..."
+                className="w-200 min-w-80 shrink pl-2 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          <AddNewSection boardData={boardData} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} handleChange={handleChange} handleSubmit={handleSubmit} />
         </div>
 
         {/* desktop nav links */}
@@ -75,26 +89,13 @@ export default function NavBar() {
               <li key={link.name}>
                 <a
                   href={link.href}
-                  className="text-gray-700 text-[0.9rem] hover:text-blue-600 font-medium"
+                  className="text-gray-200 text-[0.9rem] hover:text-blue-600 font-medium"
                 >
                   {link.name}
                 </a>
               </li>
             ))}
           </ul>
-        </div>
-
-        <div className="flex justify-around gap-2">
-          <div className="hidden lg:flex lg:items-center lg:space-x-4">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Search..."
-                className="max-w-140 min-w-80 shrink pl-2 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
-          <AddNewSection boardData={boardData} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} handleChange={handleChange} handleSubmit={handleSubmit} />
         </div>
 
         <div>

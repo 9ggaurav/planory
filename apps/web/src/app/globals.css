@@ -123,3 +123,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+body {
+  background-color: #2D5C4F;
+}

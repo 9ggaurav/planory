@@ -32,7 +32,7 @@ export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen,
         <>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="hidden hover:cursor-pointer md:block bg-blue-600 text-white hover:bg-blue-700">
+              <Button className="hidden hover:cursor-pointer md:block bg-[#E07A5F] text-white hover:bg-[#c64927]">
                 Create
               </Button>
             </DialogTrigger>

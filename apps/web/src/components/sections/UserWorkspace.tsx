@@ -7,8 +7,8 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
     
     return (
         <section className="mt-8">
-            <div>
-                <h1 className="text-neutral-950 text-2xl font-bold">YOUR WORKSPACES</h1>
+            <div className="">
+                <h1 className="text-white text-2xl font-bold">YOUR WORKSPACES</h1>
             </div>
 
             <div className="mt-3">
