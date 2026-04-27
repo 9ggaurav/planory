@@ -20,6 +20,7 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
                             title={board.title}
                             tag={board.tag}
                             creator={board.creator}
+                            liked={board.liked}
                         />
                     ))}
                 </div>

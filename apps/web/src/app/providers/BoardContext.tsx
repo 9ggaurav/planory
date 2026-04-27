@@ -11,19 +11,22 @@ export function BoardProvider({ children }: {children: React.ReactNode}) {
     const [boards, setBoards] = useState<BoardType[]>([
     {
       id: "1",
-      coverImage: "/vercel.svg",
+      coverImage: "/cover2.jpg",
       title: "Marketing Team",
       tag: "Marketing",
       creator: "user12sdfsfsdf3",
-      isPublic: false
+      isPublic: false,
+      liked: false
     },
     {
       id: "2",
-      coverImage: "/logo.png",
+      coverImage: "/cover.jpg",
       title: "Product Team",
       tag: "Product",
       creator: "user456",
-      isPublic: true
+      isPublic: true,
+      liked: true
+
     },
   ]);
   const addBoard = (newBoard: BoardType) => {

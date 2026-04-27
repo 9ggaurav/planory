@@ -22,6 +22,7 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
                                 title={board.title}
                                 tag={board.tag}
                                 creator={board.creator}
+                                liked={board.liked}
                             />
                         ))
                     }

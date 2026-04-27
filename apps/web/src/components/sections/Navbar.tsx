@@ -7,10 +7,11 @@ import Image from 'next/image';
 import type { userBoard as BoardType } from '@/utils/types';
 import {useBoards} from "@/app/providers/BoardContext"
 import AddNewSection from '@/components/custom/AddNew';
+import Link from 'next/link';
 
 
 const navLinks = [
-  { name: "Dashboard", href: "/" },
+  { name: "Dashboard", href: "/boards" },
   { name: "Projects", href: "#" },
   { name: "Info", href: "#" },
   { name: "Account", href: "#" },
@@ -25,6 +26,7 @@ export default function NavBar() {
     title: "",
     tag: "",
     isPublic: false,
+    liked: false
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,22 +52,22 @@ export default function NavBar() {
       tag: boardData.tag,
       isPublic: boardData.isPublic || false,
       creator: "currentUser",
+      liked: boardData.liked
     };
 
     addBoard(newBoard);
     
     // Reset form state
-    setBoardData({ coverImage: "", title: "", tag: "", isPublic: false });
+    setBoardData({ coverImage: "", title: "", tag: "", isPublic: false, liked: false});
     setIsDialogOpen(false);
   }
 
   return (
     <nav className="bg-[#2D5C4F] text-white mx-auto box-border py-1">
-      <div className="w-full py-1 flex justify-around items-center">
+      <div className="w-full py-1 flex justify-start gap-15 pl-50 items-center">
         <div className="max-w-15 flex items-center justify-between px-4">
           <Image src="/logo.png" alt="Logo" width={40} height={40} className="object-contain" />
-
-          <h1 className="text-1xl font-extrabold">PLANA</h1>
+          <h1 className="text-1xl font-extrabold text-[#FFFFFF]">PLANA</h1>
         </div>
 
 
@@ -75,11 +77,13 @@ export default function NavBar() {
               <Input
                 type="text"
                 placeholder="Search..."
-                className="w-200 min-w-80 shrink pl-2 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="hidden md:block flex-1 min-w-200 max-w-200 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
-          <AddNewSection boardData={boardData} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} handleChange={handleChange} handleSubmit={handleSubmit} />
+          <div className='hidden lg:inline'>
+            <AddNewSection boardData={boardData} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} handleChange={handleChange} handleSubmit={handleSubmit} />
+          </div>
         </div>
 
         {/* desktop nav links */}
@@ -87,12 +91,12 @@ export default function NavBar() {
           <ul className="hidden md:flex md:space-x-6 md:justify-center md:mt-2">
             {navLinks.map(link => (
               <li key={link.name}>
-                <a
+                <Link
                   href={link.href}
-                  className="text-gray-200 text-[0.9rem] hover:text-blue-600 font-medium"
+                  className="text-[#A8CCC4] text-[0.9rem] hover:text-[#FFFFFF] font-medium"
                 >
                   {link.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

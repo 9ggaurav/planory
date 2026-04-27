@@ -5,4 +5,5 @@ export type userBoard = {
     tag: string;
     isPublic?: boolean;
     creator?: string;
+    liked: boolean
 };
