@@ -14,8 +14,10 @@ export default function Home() {
   return (
     <>
     <Container>
-      <PublicBoards publicBoards={boards} />
-      <UserWorkspace userBoards={boards} />
+      <div className="ml-10">
+        <PublicBoards publicBoards={boards} />
+        <UserWorkspace userBoards={boards} />
+      </div>
     </Container>
     </>
     

@@ -63,10 +63,10 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="bg-[#2D5C4F] text-white mx-auto box-border py-1">
+    <nav className="bg-[#2D5C4F] text-white mx-auto box-border py-1 sticky top-0">
       <div className="w-full py-1 flex justify-start gap-15 pl-50 items-center">
-        <div className="max-w-15 flex items-center justify-between px-4">
-          <Image src="/logo.png" alt="Logo" width={40} height={40} className="object-contain" />
+        <div className="max-w-15 flex items-center gap-1 justify-between px-4">
+          <Image src="/vercel.svg" alt="Logo" width={30} height={30} className="object-contain" />
           <h1 className="text-1xl font-extrabold text-[#FFFFFF]">PLANA</h1>
         </div>
 

@@ -20,8 +20,8 @@ export default  function RootLayout({
   const pathname = usePathname();
 
   return (
-        <section className="w-full h-screen">
-          <section className="mx-auto max-w-[80vw] h-full flex justify-start bg-[#FFF0E8] rounded-2xl">
+        <section className="w-full h-250">
+          <section className="mx-auto max-w-[80vw] h-246 flex justify-start bg-[#FFF0E8] rounded-2xl">
             <section className="hidden md:block px-2 py-3 w-80 text-[#2D5C4F] bg-[#E8F7F2] border-2 border-[#F0D8C8] rounded-2xl">
               <div className="text-[#C0604A] text-[20px] font-medium mb-5">
                 <p>Menu</p>

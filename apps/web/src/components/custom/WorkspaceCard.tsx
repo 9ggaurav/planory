@@ -23,7 +23,7 @@ export default function WorkspaceCard({
 
   return (
     <Link draggable={true} href={`/b/${id}`}>
-      <Card className="w-54 h-40 overflow-hidden shadow-md rounded-2xl border-[#D0ECE4] hover:border-[#B8E0D6] hover:bg-[#F5FBF8]">
+      <Card className="w-60 h-38 overflow-hidden shadow-md rounded-2xl border-[#D0ECE4] hover:border-[#B8E0D6] hover:bg-[#F5FBF8]">
       
       {/* Image Section */}
       <div className="relative h-28 w-full">

@@ -37,7 +37,7 @@ export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen,
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-106.25 relative right-200">
+            <DialogContent className="sm:max-w-106.25">
               <form onSubmit={handleSubmit}>
                 <DialogHeader>
                   <DialogTitle>Create Board</DialogTitle>
