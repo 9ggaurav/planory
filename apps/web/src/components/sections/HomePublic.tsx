@@ -22,6 +22,7 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
                             coverImage={board.coverImage}
                             title={board.title}
                             tag={board.tag}
+                            isTemplate={board.isTemplate}
                             creator={board.creator}
                             liked={board.liked}
                         />

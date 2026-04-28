@@ -8,9 +8,12 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
     
     return (
         <section className="mt-8">
-            <div className="text-[#1E3F36] flex gap-2">
-                <BriefcaseBusiness />
-                <h1 className="text-[#1E3F36] text-2xl">WORKSPACE</h1>
+            <div className="text-[#1E3F36] mb-4">
+                <div className="flex gap-2">
+                    <BriefcaseBusiness />
+                    <h1 className="text-[#1E3F36] text-2xl">WORKSPACE</h1>
+                </div>
+                <p className="text-[#5A9E8A]">Boards you own and collaborate on</p>
             </div>
 
             <div className="mt-1">
@@ -23,6 +26,7 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
                                 coverImage={board.coverImage}
                                 title={board.title}
                                 tag={board.tag}
+                                isTemplate={board.isTemplate}
                                 creator={board.creator}
                                 liked={board.liked}
                             />

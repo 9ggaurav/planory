@@ -25,6 +25,7 @@ export default function NavBar() {
     coverImage: "",
     title: "",
     tag: "",
+    isTemplate: false,
     isPublic: false,
     liked: false
   });
@@ -47,9 +48,10 @@ export default function NavBar() {
 
     const newBoard: BoardType = {
       id: crypto.randomUUID(),
-      coverImage: boardData.coverImage || "/logo.png",
+      coverImage: boardData.coverImage || "/cover2.jpg",
       title: boardData.title,
       tag: boardData.tag,
+      isTemplate: boardData.isTemplate,
       isPublic: boardData.isPublic || false,
       creator: "currentUser",
       liked: boardData.liked
@@ -58,7 +60,7 @@ export default function NavBar() {
     addBoard(newBoard);
     
     // Reset form state
-    setBoardData({ coverImage: "", title: "", tag: "", isPublic: false, liked: false});
+    setBoardData({ coverImage: "", title: "", tag: "", isPublic: false, isTemplate: false, liked: false});
     setIsDialogOpen(false);
   }
 

@@ -13,7 +13,7 @@ export default function InboxBoard() {
     }
 
     return (
-        <div className="min-w-[13vw] bg-[#FFF0E8] border-neutral-900 h-245.25 rounded-2xl">
+        <div className="hidden lg:block lg:min-w-[13vw] bg-[#FFF0E8] border-neutral-900 lg:h-245.25 rounded-2xl">
             <InboxBoardNavbar />
             <main>
                 <div className="flex justify-center w-full">

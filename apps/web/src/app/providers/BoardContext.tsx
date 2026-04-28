@@ -14,6 +14,7 @@ export function BoardProvider({ children }: {children: React.ReactNode}) {
       coverImage: "/cover2.jpg",
       title: "Marketing Team",
       tag: "Marketing",
+      isTemplate: false,
       creator: "user12sdfsfsdf3",
       isPublic: false,
       liked: false
@@ -23,6 +24,7 @@ export function BoardProvider({ children }: {children: React.ReactNode}) {
       coverImage: "/cover.jpg",
       title: "Product Team",
       tag: "Product",
+      isTemplate: true,
       creator: "user456",
       isPublic: true,
       liked: true

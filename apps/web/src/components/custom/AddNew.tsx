@@ -83,6 +83,26 @@ export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen,
                       </Field>
                     </FieldLabel>
                   </div>
+                  <div className="grid gap-3">
+                  <FieldLabel>
+                      <Field orientation="horizontal">
+                        <Input
+                          className="size-[0.9rem]"
+                          type="checkbox"
+                          id="isTemplate"
+                          name="isTemplate"
+                          checked={boardData.isTemplate}
+                          onChange={handleChange}
+                        />
+                        <FieldContent>
+                          <FieldTitle>Publish Board</FieldTitle>
+                          <FieldDescription>
+                            is This board a Template?
+                          </FieldDescription>
+                        </FieldContent>
+                      </Field>
+                    </FieldLabel>
+                  </div>
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
