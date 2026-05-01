@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
 import type { inboxTask } from "@/utils/types";
 import clsx from "clsx";
+import InboxNewTaskCards from "@/components/sections/ProjectBoard/components/InboxNewTaskCards";
 
 type ChildProps = {
     tasks: inboxTask[],
@@ -31,7 +32,7 @@ export default function InboxBoard({tasks, handleSubmit}: ChildProps) {
         <div className="hidden lg:block lg:min-w-[13vw] bg-[#FFF0E8] border-neutral-900 lg:h-245.25 rounded-2xl h-full">
             <InboxBoardNavbar />
             <main className="h-full">
-                <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full mb-3">
+                <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full mb-2">
                     <Button onClick={handleClick} className={clsx(
                         'bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] text-left mx-3 hover:cursor-pointer',
                         isAddNewTaskDisplayed && 'hidden',
@@ -51,11 +52,7 @@ export default function InboxBoard({tasks, handleSubmit}: ChildProps) {
                 </div>
 
                 <div className="h-full w-full">
-                    <div className="w-full flex justify-start flex-col-reverse items-center gap-1">
-                        {tasks && tasks.map(task => (
-                        <div className="bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] px-2 py-1 rounded-sm text-left mx-3 hover:cursor-pointer" key={task.id}>{task.title}</div>
-                    ))}
-                    </div>
+                    <InboxNewTaskCards tasks={tasks} />
                 </div>
             </main>
         </div>

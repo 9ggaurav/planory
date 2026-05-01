@@ -37,7 +37,7 @@ export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen,
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-106.25">
+            <DialogContent className="sm:max-w-106.25 bg-[#E8F7F2]">
               <form onSubmit={handleSubmit}>
                 <DialogHeader>
                   <DialogTitle>Create Board</DialogTitle>
@@ -95,7 +95,7 @@ export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen,
                           onChange={handleChange}
                         />
                         <FieldContent>
-                          <FieldTitle>Publish Board</FieldTitle>
+                          <FieldTitle>Create Template</FieldTitle>
                           <FieldDescription>
                             is This board a Template?
                           </FieldDescription>
