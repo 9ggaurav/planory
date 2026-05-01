@@ -2,28 +2,19 @@ import InboxBoardNavbar from "./ProjectBoardComponents/InboxBoardNavbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
+import type { inboxTask } from "@/utils/types";
 import clsx from "clsx";
 
+type ChildProps = {
+    tasks: inboxTask[],
+    handleSubmit: React.FormEventHandler<HTMLFormElement>
+}
 
-export default function InboxBoard() {
+
+export default function InboxBoard({tasks, handleSubmit}: ChildProps) {
 
     const [isAddNewTaskDisplayed, setIsAddNewTaskDisplayed] = useState(false);
     const addTaskButtonRef = useRef<HTMLInputElement>(null);
-    const [tasks, setTasks] = useState<string[]>([]);
-
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
-        const formData = new FormData(e.currentTarget);
-        const newTask = formData.get("new-task") as string;
-
-        if (!newTask.trim()) return;
-
-        setTasks(prev => [...prev, newTask.trim()]);
-
-        e.currentTarget.reset();
-        handleClick();
-    }
 
     useEffect(() => {
         if (isAddNewTaskDisplayed) {
@@ -37,10 +28,10 @@ export default function InboxBoard() {
 
 
     return (
-        <div className="hidden lg:block lg:min-w-[13vw] bg-[#FFF0E8] border-neutral-900 lg:h-245.25 rounded-2xl">
+        <div className="hidden lg:block lg:min-w-[13vw] bg-[#FFF0E8] border-neutral-900 lg:h-245.25 rounded-2xl h-full">
             <InboxBoardNavbar />
-            <main>
-                <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full">
+            <main className="h-full">
+                <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full mb-3">
                     <Button onClick={handleClick} className={clsx(
                         'bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] text-left mx-3 hover:cursor-pointer',
                         isAddNewTaskDisplayed && 'hidden',
@@ -57,6 +48,14 @@ export default function InboxBoard() {
                             </form>
                         </div>
                     )}
+                </div>
+
+                <div className="h-full w-full">
+                    <div className="w-full flex justify-start flex-col-reverse items-center gap-1">
+                        {tasks && tasks.map(task => (
+                        <div className="bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] px-2 py-1 rounded-sm text-left mx-3 hover:cursor-pointer" key={task.id}>{task.title}</div>
+                    ))}
+                    </div>
                 </div>
             </main>
         </div>
