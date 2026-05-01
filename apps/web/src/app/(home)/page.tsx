@@ -1,8 +1,9 @@
+"use client";
 import Image from "next/image";
 
 export default function PlanaEmptyState() {
   return (
-    <div className="flex items-center justify-center py-12 px-4 relative bottom-70 left-90">
+    <div className="flex items-center justify-center w-fit h-fit px-4">
       <div className=" text-white max-w-xl w-full rounded-xl p-8 text-center">
         
         <Image
