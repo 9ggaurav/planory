@@ -8,7 +8,7 @@ import {
 
 export default function InboxBoardNavbar() {
     return (
-        <header className="h-12 flex justify-between backdrop-blur-md bg-white/30 pl-3 pt-2 rounded-2xl">
+        <header className="h-16 flex justify-between backdrop-blur-md bg-white/30 pl-3 pt-2 rounded-2xl">
                 <h1 className="text-[20px] font-medium"> Inbox</h1>
                 <div className="flex justify-around gap-4 px-3">
                     <Tooltip>
