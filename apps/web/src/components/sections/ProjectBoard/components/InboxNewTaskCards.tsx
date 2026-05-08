@@ -1,4 +1,4 @@
-import type { inboxTask } from "@/utils/types"
+import type { inboxTask } from "@repo/shared"
 
 export default function InboxNewTaskCards({tasks}: {tasks: inboxTask[]}) {
     return (

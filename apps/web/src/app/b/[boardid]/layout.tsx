@@ -1,4 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { InboxTaskProvider } from "@/app/providers/inboxTaskContext";
 
 export default function RootLayout({
   children,
@@ -7,7 +8,9 @@ export default function RootLayout({
 }>) {
   return (
         <TooltipProvider>
-          {children}
+          <InboxTaskProvider>
+            {children}
+          </InboxTaskProvider>
         </TooltipProvider>
   );
 }

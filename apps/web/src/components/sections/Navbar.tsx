@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
-import type { userBoard as BoardType } from '@/utils/types';
+import type { userBoard as BoardType } from '@repo/shared';
 import {useBoards} from "@/app/providers/BoardContext"
 import AddNewSection from '@/components/custom/AddNew';
 import Link from 'next/link';

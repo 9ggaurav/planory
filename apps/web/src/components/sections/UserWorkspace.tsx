@@ -1,6 +1,6 @@
 import WorkspaceCard from "@/components/custom/WorkspaceCard";
 // import NewBoardCard from "@/components/custom/newBoardCard";
-import type { userBoard as UserBoardType } from "@/utils/types";
+import type { userBoard as UserBoardType } from "@repo/shared";
 import { BriefcaseBusiness } from "lucide-react";
 
 

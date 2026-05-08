@@ -2,7 +2,7 @@ import InboxBoardNavbar from "./ProjectBoardComponents/InboxBoardNavbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
-import type { inboxTask } from "@/utils/types";
+import type { inboxTask } from "@repo/shared";
 import clsx from "clsx";
 import InboxNewTaskCards from "@/components/sections/ProjectBoard/components/InboxNewTaskCards";
 

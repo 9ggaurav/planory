@@ -17,7 +17,7 @@ import {
   FieldLabel,
   FieldTitle,
 } from "@/components/ui/field"
-import type { userBoard as BoardType } from '@/utils/types';
+import type { userBoard as BoardType } from '@repo/shared';
 
 type ChildProps = {
   boardData: BoardType;

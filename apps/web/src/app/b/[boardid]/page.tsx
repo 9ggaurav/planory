@@ -3,37 +3,39 @@ import {Group, Panel, Separator } from "react-resizable-panels";
 import InboxBoard from "@/components/sections/ProjectBoard/InboxBoard";
 import TasklistBoard from "@/components/sections/ProjectBoard/TasklistBoard";
 import { useParams } from "next/navigation";
-import { useState } from "react";
-import type { inboxTask } from "@/utils/types";
+// import { useState } from "react";
+// import type { inboxTask } from "@repo/shared";
+import { useInboxTask } from "@/app/providers/inboxTaskContext";
 
 
 export default function Board() {
     const params = useParams();
     const id = params.boardid;
     console.log(`params are ${id}`);
-        const [tasks, setTasks] = useState<inboxTask[]>([]);
+        // const [tasks, setTasks] = useState<inboxTask[]>([]);
 
-        function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-            e.preventDefault();
+        // function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        //     e.preventDefault();
 
-            const formData = new FormData(e.currentTarget);
-            const taskTitle = formData.get("new-task") as string;
+        //     const formData = new FormData(e.currentTarget);
+        //     const taskTitle = formData.get("new-task") as string;
 
-            if (typeof taskTitle != "string" || !taskTitle.trim() ){
-                return;
-            }
+        //     if (typeof taskTitle != "string" || !taskTitle.trim() ){
+        //         return;
+        //     }
 
 
-            const newTask: inboxTask = {
-                id: crypto.randomUUID(),
-                title: taskTitle,
-            }
+        //     const newTask: inboxTask = {
+        //         id: crypto.randomUUID(),
+        //         title: taskTitle,
+        //     }
 
-            setTasks(prev => [...prev, newTask]);
+        //     setTasks(prev => [...prev, newTask]);
 
-            e.currentTarget.reset();
-        }
-        console.log(tasks);
+        //     e.currentTarget.reset();
+        // }
+        // console.log(tasks);
+    const {inboxTasks, handleInboxTaskSubmit} = useInboxTask();
 
 
     return (
@@ -42,7 +44,7 @@ export default function Board() {
             <Group className="w-full flex gap-1 justify-center h-full overflow-hidden mx-3">
                 <Panel id="Inbox-board-panel" collapsible defaultSize="14%" minSize="14%">
                     <div className="overflow-auto">
-                        <InboxBoard tasks={tasks} handleSubmit={handleSubmit} />
+                        <InboxBoard tasks={inboxTasks} handleSubmit={handleInboxTaskSubmit} />
                     </div>
                 </Panel>
                 <Separator className="w-2 flex items-center justify-center group cursor-col-resize active:cursor-grabbing">

@@ -8,10 +8,3 @@ export type userBoard = {
     creator?: string;
     liked: boolean
 };
-
-export type inboxTask = {
-    id: string;
-    title: string;
-    taskListId?: string;
-    boardId?:string;
-}

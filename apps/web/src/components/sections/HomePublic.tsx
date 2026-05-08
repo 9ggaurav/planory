@@ -1,5 +1,5 @@
 import WorspaceCard from "@/components/custom/WorkspaceCard";
-import type {userBoard as userBoardType} from "@/utils/types";
+import type {userBoard as userBoardType} from "@repo/shared";
 import { UsersRound } from "lucide-react";
 
 export default function PublicBoards({publicBoards}: {publicBoards: userBoardType[]}) {
