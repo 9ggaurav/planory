@@ -31,6 +31,11 @@ export const boards: Board[] = [
     title: "Project Alpha",
     created_at: "2026-04-25T10:00:00Z",
   },
+  {
+    id: "2",
+    title: "Project mk ultra",
+    created_at: "1915-03-12T10:00:00Z",
+  }
 ];
 
 export const taskLists: TaskList[] = [
