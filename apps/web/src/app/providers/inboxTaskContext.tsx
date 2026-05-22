@@ -1,39 +1,54 @@
 "use client";
 import {createContext, useContext, useState} from "react";
-import type { inboxTask, inboxTask as inboxTaskType } from "@repo/shared";
+import type { inboxTask as inboxTaskType } from "@repo/shared";
 
 const inboxTaskContext = createContext<{
     inboxTasks: inboxTaskType[];
-    handleInboxTaskSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    createTask: (title: string) => void;
+    updateTask: (id: string, updates: Partial<inboxTaskType>) => void;
+    deleteTask: (id: string) => void;
 } | null> (null);
 
 
 export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     const [inboxTasks, setInboxTasks] = useState<inboxTaskType[]>([]);
-    
-    function handleInboxTaskSubmit(e: React.FormEvent<HTMLFormElement>) {
-            e.preventDefault();
+    console.log(inboxTasks)
 
-            const formData = new FormData(e.currentTarget);
-            const taskTitle = formData.get("new-task") as string;
-
-            if (typeof taskTitle != "string" || !taskTitle.trim() ){
-                return;
-            }
-
-
-            const newTask: inboxTask = {
+    function createTask(title: string) {
+        const trimmed = title.trim()
+        if (!trimmed) return
+        setInboxTasks(prev => [...prev,
+            {
                 id: crypto.randomUUID(),
-                title: taskTitle,
-            }
+                title: trimmed,
+                description: '',
+                isDone: false,
+                createdAt: new Date().toISOString()
+            }]
+        )
+    }
 
-            setInboxTasks(prev => [...prev, newTask]);
+    function updateTask(id: string, updates: Partial<inboxTaskType>) {
+        setInboxTasks((prev) => 
+            prev.map((task) => 
+                task.id === id
+                    ? {
+                        ...task,
+                        ...updates,
+                    }
+                    : task
+            )
+        )
+    }
 
-            e.currentTarget.reset();
-        }
+    function deleteTask(taskId: string) {
+        setInboxTasks(prev =>
+            prev.filter(task => task.id !== taskId)
+            );
+    }
 
   return (
-    <inboxTaskContext.Provider value={{ inboxTasks, handleInboxTaskSubmit }}>
+    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask }}>
         {children}
     </inboxTaskContext.Provider>
   )
