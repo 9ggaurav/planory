@@ -20,10 +20,11 @@ import {
   FieldLabel,
   FieldTitle,
 } from "@/components/ui/field";
-import { useState } from "react"
 import { useInboxTask } from "@/app/providers/inboxTaskContext"
 import { ReceiptText } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
+import { DialogDescription } from "@radix-ui/react-dialog"
+import { useState } from "react"
 
 type childProp = {
     selectedTask: inboxTaskType | null;
@@ -31,8 +32,12 @@ type childProp = {
 }
 
 export default function InboxTaskModal({selectedTask, setSelectedTask}: childProp) {
-    // const [selectedTask, setSelectedTask] = useState<inboxTaskType | null>(null);
-    const {updateTask} = useInboxTask()
+    const {updateTask} = useInboxTask();
+    const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
+
+    function editDescription() { 
+        setIsEditingDescription(true);
+    }
 
     function handleSubmitedit(
         e: React.FormEvent<HTMLFormElement>
@@ -50,6 +55,7 @@ export default function InboxTaskModal({selectedTask, setSelectedTask}: childPro
         updateTask(selectedTask.id, {
             description,
         });
+        setIsEditingDescription(false);
 
         setSelectedTask(null);
     }
@@ -70,10 +76,10 @@ export default function InboxTaskModal({selectedTask, setSelectedTask}: childPro
                                         <strong>In your Inbox</strong>
                                     </p>
                                 </header>
-                                <FieldLabel>
+                                <FieldLabel className="border-0 shadow-none">
                                     <Field orientation="horizontal">
                                     <Input
-                                        className="size-[0.9rem]"
+                                        className="size-[1.3rem] rounded-2xl"
                                         type="checkbox"
                                         id="isTaskComplete"
                                         name="isTaskComplete"
@@ -83,17 +89,27 @@ export default function InboxTaskModal({selectedTask, setSelectedTask}: childPro
                                         // onChange={handleChange}
                                     />
                                     <FieldContent>
-                                        <DialogTitle className="text-2xl font-bold">{selectedTask?.title}</DialogTitle>
+                                        <DialogTitle className="text-[20px] font-semibold">{selectedTask?.title}</DialogTitle>
                                     </FieldContent>
                                 </Field>
                                 </FieldLabel>
                             </DialogHeader>
                             <div className="mt-2">
-                                <Label className="text-[16px]" htmlFor="description-textarea">
-                                    <span><ReceiptText /></span>
-                                    <p>Description</p>
+                                <Label className="text-[16px] flex justify-between" htmlFor="description-textarea">
+                                    <div className="flex gap-1 text-neutral-500">
+                                        <span><ReceiptText /></span>
+                                        <p>Description</p>
+                                    </div>
+                                    <Button type="button" onClick={() => editDescription()} className="bg-neutral-200 text-neutral-950 px-2 py-1 hover:cursor-pointer hover:bg-neutral-300">edit</Button>                           
                                 </Label>
-                                <Textarea defaultValue={selectedTask?.description} name="description" id="description-textarea" placeholder="Add some more detailed description here..."></Textarea>
+                                {
+                                    !isEditingDescription ? 
+                                        <DialogDescription>
+                                            {selectedTask?.description ? selectedTask.description : <p className="text-neutral-400">No Description</p>}
+                                        </DialogDescription>
+                                        : <Textarea defaultValue={selectedTask?.description} name="description" id="description-textarea" placeholder="Add some more detailed description here..."></Textarea>
+                                }
+                                
                             </div>
                             <DialogFooter className="mt-4">
                                 <DialogClose asChild>
