@@ -2,7 +2,6 @@ import InboxBoardNavbar from "./ProjectBoardComponents/InboxBoardNavbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
-import type { inboxTask } from "@repo/shared";
 import clsx from "clsx";
 import InboxNewTaskCards from "@/components/sections/ProjectBoard/components/InboxNewTaskCards";
 import { useInboxTask } from "@/app/providers/inboxTaskContext";
@@ -42,7 +41,7 @@ export default function InboxBoard() {
             <InboxBoardNavbar />
             <main className="h-full">
                 <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full mb-2">
-                    <Button onClick={handleClick} className={clsx(
+                    <Button id="add-new-inbox-task-card" onClick={handleClick} className={clsx(
                         'bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] text-left mx-3 hover:cursor-pointer',
                         isAddNewTaskDisplayed && 'hidden',
                         !isAddNewTaskDisplayed && 'inline'
@@ -51,7 +50,7 @@ export default function InboxBoard() {
                         <div className="bg-[#2D5C4F] w-[96%] max-w-100 px-2 py-1 rounded-xl">
                             <form onSubmit={addNewTask} action="">
                                 <Input autoComplete="off" placeholder="Add new task" ref={addTaskButtonRef} name="title" className="text-white" />
-                                <div className="flex gap-1 text-[12px] mt-1 ">
+                                <div onMouseLeave={handleClick} className="flex gap-1 text-[12px] mt-1 ">
                                     <Button className="hover:cursor-pointer bg-[#E07A5F] text-white hover:bg-[#c64927]" type="submit" >Add</Button>
                                     <Button className="hover:cursor-pointer bg-[#2D5C4F] hover:bg-[#3b6b5d]" onClick={handleClick}>Cancel</Button>
                                 </div>

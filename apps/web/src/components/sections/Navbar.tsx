@@ -44,7 +44,7 @@ export default function NavBar() {
     if (!boardData.title || !boardData.tag) {
       alert("Please fill in all required fields");
       return;
-    }
+    } 
 
     const newBoard: BoardType = {
       id: crypto.randomUUID(),
