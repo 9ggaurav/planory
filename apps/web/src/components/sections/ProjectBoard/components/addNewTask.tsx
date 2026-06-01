@@ -33,7 +33,7 @@ export default function AddNewTask({addNewTask}: childProps) {
                 !isAddNewTaskDisplayed && 'inline'
             )}>Add a card</Button>
             {isAddNewTaskDisplayed && (
-                <div className="bg-[#2D5C4F] w-[96%] max-w-100 px-2 py-1 rounded-xl">
+                <div className="bg-[#2D5C4F] w-[96%] max-[96%] px-2 py-1 rounded-xl">
                     <form onSubmit={addNewTask} action="">
                         <Input autoComplete="off" placeholder="Add new task" ref={addTaskButtonRef} name="title" className="text-white" />
                         <div onMouseLeave={handleClick} className="flex gap-1 text-[12px] mt-1 ">

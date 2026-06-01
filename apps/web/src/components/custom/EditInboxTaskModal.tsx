@@ -1,6 +1,5 @@
 "use client"
 import type { inboxTask as inboxTaskType } from "@repo/shared"
-import type { inboxTask } from "@repo/shared"
 import {
   Dialog,
   DialogClose,
@@ -8,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -16,9 +14,7 @@ import { Button } from "@/components/ui/button"
 import {
   Field,
   FieldContent,
-  FieldDescription,
   FieldLabel,
-  FieldTitle,
 } from "@/components/ui/field";
 import { useInboxTask } from "@/app/providers/inboxTaskContext"
 import { ReceiptText } from "lucide-react"
@@ -42,7 +38,7 @@ export default function InboxTaskModal({selectedTaskId, setSelectedTaskId}: chil
     function handleOpenChange(open: boolean) {
         if (!open) {
         setSelectedTaskId(null);
-        setIsEditingDescription(false); // ✅ reset edit state on close
+        setIsEditingDescription(false); 
         }
     }
 
@@ -57,7 +53,6 @@ export default function InboxTaskModal({selectedTaskId, setSelectedTaskId}: chil
         if (typeof description != "string") return;
         updateTask(selectedTask!.id, {description});
         setIsEditingDescription(false)
-        // setSelectedTask(null)
     }
 
     function handleTaskCompletion(e: React.ChangeEvent<HTMLInputElement>) {

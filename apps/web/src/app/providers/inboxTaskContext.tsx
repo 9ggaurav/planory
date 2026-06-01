@@ -7,6 +7,7 @@ const inboxTaskContext = createContext<{
     createTask: (title: string) => void;
     updateTask: (id: string, updates: Partial<inboxTaskType>) => void;
     deleteTask: (id: string) => void;
+    setInboxTasks: React.Dispatch<React.SetStateAction<inboxTaskType[]>>;
 } | null> (null);
 
 
@@ -52,7 +53,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     }
 
   return (
-    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask }}>
+    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask, setInboxTasks }}>
         {children}
     </inboxTaskContext.Provider>
   )
