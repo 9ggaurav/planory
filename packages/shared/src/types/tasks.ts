@@ -2,7 +2,7 @@
 
 export type inboxTask = {
     id: string;
-    position?: number;
+    position: number;
     title: string;
     taskListId?: string;
     boardId?:string;

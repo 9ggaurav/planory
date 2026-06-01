@@ -14,6 +14,8 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     const [inboxTasks, setInboxTasks] = useState<inboxTaskType[]>([]);
     console.log(inboxTasks)
 
+    const nextPosition = Math.max(...inboxTasks.map(t => t.position), -1)+1;
+
     function createTask(title: string) {
         const trimmed = title.trim()
         if (!trimmed) return
@@ -21,7 +23,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
             {
                 id: crypto.randomUUID(),
                 title: trimmed,
-                position: inboxTasks.length,
+                position: nextPosition,
                 description: '',
                 isDone: false,
                 createdAt: new Date().toISOString()
