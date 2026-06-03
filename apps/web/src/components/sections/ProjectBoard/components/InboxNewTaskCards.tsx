@@ -3,6 +3,7 @@ import type {inboxTask as inboxTaskType } from '@repo/shared';
 import { useState, useRef } from "react"
 import { useInboxTask } from "@/app/providers/inboxTaskContext"
 import InboxTaskModal from "@/components/custom/EditInboxTaskModal"
+// import { GripVertical } from 'lucide-react';
 
 export default function InboxNewTaskCards() {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -41,10 +42,12 @@ export default function InboxNewTaskCards() {
                 onDrop={() => handleWithinDrop(index)}
                 >
                 <p 
-                className={
-                    task.isDone ? 'line-through opacity-75' : ''
-                }
-                >{task.title}</p>
+                className={`
+                    ${task.isDone ? 'line-through opacity-75' : ''} flex
+                `}
+                >   
+                    {task.title}
+                </p>
             </div>
         ))}
             <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} />

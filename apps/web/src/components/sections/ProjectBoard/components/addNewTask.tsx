@@ -26,7 +26,7 @@ export default function AddNewTask({addNewTask}: childProps) {
     }
 
     return(
-        <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full mb-2">
+        <div id="addNewTaskButton-inboxSection" className="flex justify-center w-[96%] mb-2">
             <Button id="add-new-inbox-task-card" onClick={handleClick} className={clsx(
                 'bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] text-left mx-3 hover:cursor-pointer',
                 isAddNewTaskDisplayed && 'hidden',

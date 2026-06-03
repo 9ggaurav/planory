@@ -25,6 +25,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
                 id: crypto.randomUUID(),
                 title: trimmed,
                 position: nextPosition,
+                isInbox: true,
                 description: '',
                 isDone: false,
                 createdAt: new Date().toISOString()
