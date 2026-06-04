@@ -5,13 +5,15 @@
 import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect, useRef, useDebugValue } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type childProps = {
-    addNewTask: (e: React.FormEvent<HTMLFormElement>) => void
+    addNewTask: (e: React.FormEvent<HTMLFormElement>) => void;
+    children: React.ReactNode;
+    className?: string;
 }
 
-export default function AddNewTask({addNewTask}: childProps) {
+export default function AddNewTask({addNewTask, children}: childProps) {
     const [isAddNewTaskDisplayed, setIsAddNewTaskDisplayed] = useState(false);
     const addTaskButtonRef = useRef<HTMLInputElement>(null);
 
@@ -26,12 +28,12 @@ export default function AddNewTask({addNewTask}: childProps) {
     }
 
     return(
-        <div id="addNewTaskButton-inboxSection" className="flex justify-center w-[96%] mb-2">
+        <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full mb-2">
             <Button id="add-new-inbox-task-card" onClick={handleClick} className={clsx(
                 'bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] text-left mx-3 hover:cursor-pointer',
                 isAddNewTaskDisplayed && 'hidden',
                 !isAddNewTaskDisplayed && 'inline'
-            )}>Add a card</Button>
+            )}>{children}</Button>
             {isAddNewTaskDisplayed && (
                 <div className="bg-[#2D5C4F] w-[96%] max-[96%] px-2 py-1 rounded-xl">
                     <form onSubmit={addNewTask} action="">

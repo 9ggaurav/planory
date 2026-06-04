@@ -16,7 +16,7 @@ export default function InboxBoard() {
             return;
         }
 
-        createTask(title);
+        createTask(title, 'inbox');
         e.currentTarget.reset()
     }
 
@@ -24,7 +24,7 @@ export default function InboxBoard() {
         <div className="hidden lg:block lg:min-w-[13vw] bg-[#FFF0E8] border-neutral-900 lg:h-245.25 rounded-2xl h-full">
             <InboxBoardNavbar />
             <main className="h-full">
-                <AddNewTask addNewTask={addNewTask}  />
+                <AddNewTask addNewTask={addNewTask}>add a card</AddNewTask>
                 <div className="h-full w-full">
                     <InboxNewTaskCards />
                 </div>

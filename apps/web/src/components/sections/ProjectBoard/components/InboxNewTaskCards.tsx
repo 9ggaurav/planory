@@ -7,7 +7,7 @@ import InboxTaskModal from "@/components/custom/EditInboxTaskModal"
 
 export default function InboxNewTaskCards() {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-    const {inboxTasks, setInboxTasks} = useInboxTask();
+    const {inboxTasks, reorderTasksWithinList} = useInboxTask();
     const dragWithinIndex = useRef<number |null>(null);
 
     const handleDragWithinStart = (index: number) => {
@@ -16,21 +16,23 @@ export default function InboxNewTaskCards() {
 
     const handleWithinDrop = (dropIndex: number): void => {
         if (dragWithinIndex.current === null) return;
-        const updated = [...inboxTasks];
-        const [moved] = updated.splice(dragWithinIndex.current, 1);
-        updated.splice(dropIndex, 0, moved);
-
-        const reindexed: inboxTaskType[] = updated.map((item, index) => ({
-            ...item,
-            position: index,
-        }));
-        setInboxTasks(reindexed);
+        reorderTasksWithinList(
+            "inbox",
+            dragWithinIndex.current,
+            dropIndex
+        )
         dragWithinIndex.current = null;
     }
 
+    const InboxOnlyTasks = inboxTasks.filter(
+        task => task.taskListId === "inbox"
+    ).sort(
+        (a, b) => a.position - b.position
+    )
+
     return (
         <div className="w-full flex justify-start flex-col-reverse items-center gap-1 overflow-y-auto">
-            {inboxTasks && inboxTasks.map((task, index) => (
+            {InboxOnlyTasks && InboxOnlyTasks.map((task, index) => (
             <div 
                 onClick={() => setSelectedTaskId(task.id)} 
                 id="new-inbox-task-card" 
@@ -45,6 +47,7 @@ export default function InboxNewTaskCards() {
                 className={`
                     ${task.isDone ? 'line-through opacity-75' : ''} flex
                 `}
+
                 >   
                     {task.title}
                 </p>

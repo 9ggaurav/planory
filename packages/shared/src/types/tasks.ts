@@ -6,7 +6,6 @@ export type inboxTask = {
     title: string;
     taskListId?: string;
     boardId?:string;
-    isInbox?: boolean;
     description?: string;
     isDone: boolean;
     createdAt: string;

@@ -1,6 +1,7 @@
 "use client"
 import {createContext, useContext, useState} from "react";
 import type {Tasklist as TasklistType} from "@repo/shared";
+import { useParams } from "next/navigation";
 
 // type Tasklist = {
 //     id: string;
@@ -24,6 +25,7 @@ const tasklistContext = createContext<{
 export function TasklistProvider({children}: {children: React.ReactNode}) {
     const [tasklist, setTasklist] = useState<TasklistType[]>([
     ]);
+    const boardid = useParams().boardid as string;
 
     const nextPosition = Math.max(...tasklist.map(t => t.position), -1)+1;
 
@@ -37,7 +39,7 @@ export function TasklistProvider({children}: {children: React.ReactNode}) {
                 position: nextPosition,
                 description: '',
                 isArchieved: false,
-                boardId: '123',
+                boardId: boardid,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             }
