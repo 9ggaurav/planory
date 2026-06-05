@@ -48,10 +48,14 @@ export default function InboxTaskModal({selectedTaskId, setSelectedTaskId}: chil
         if(!selectedTaskId) return;
 
         const formData = new FormData(e.currentTarget);
+
         const description = formData.get("description");
+        const title = formData.get("title");
 
         if (typeof description != "string") return;
-        updateTask(selectedTask!.id, {description});
+        if (typeof title != "string") return;
+        
+        updateTask(selectedTask!.id, {title, description});
         setIsEditingDescription(false)
     }
 
@@ -83,9 +87,19 @@ export default function InboxTaskModal({selectedTaskId, setSelectedTaskId}: chil
                         onChange={handleTaskCompletion}
                       />
                       <FieldContent>
-                        <DialogTitle className={`text-[20px] font-semibold ${selectedTask?.isDone ? 'line-through' : ''}`}>
-                          {selectedTask?.title}
-                        </DialogTitle>
+                        {isEditingDescription ? (
+                          <Input
+                            defaultValue={selectedTask?.title}
+                            name="title"
+                            id="title-input"
+                            className="ring-0 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none" 
+                          />
+                        ) : (
+                          <DialogTitle className={`text-[20px] font-semibold ${selectedTask?.isDone ? 'line-through' : ''}`}>
+                            {selectedTask?.title}
+                          </DialogTitle>
+                  )}
+                        
                       </FieldContent>
                     </Field>
                   </FieldLabel>
