@@ -4,16 +4,23 @@ import { useTasklist } from "@/app/providers/TasklistContext"
 import AddNewTask from "@/components/sections/ProjectBoard/components/addNewTask";
 import { useState, useRef } from "react";
 import InboxTaskModal from "@/components/custom/EditInboxTaskModal";
+import { useParams } from "next/navigation";
 
 
 export default function TaskListBoardMain() {
-    const { tasklist, createTasklist } = useTasklist();
+    const { tasklist, createTasklist, reorderListsWithinBoard } = useTasklist();
     const { createTask, inboxTasks, reorderTasksWithinList } = useInboxTask();
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
     const dragTaskInfo = useRef<{listId: string; index: number} | null>(null)
+    const dragListInfo = useRef<{boardId: string; index: number} | null>(null);
+    const boardid = useParams().boardid as string;
     
     const handleDragWithinStart = (listId: string, index: number) => {
         dragTaskInfo.current = {listId, index};
+    }
+
+    const handleDragWithinStartTasklist = (boardId: string, index: number) => {
+        dragListInfo.current = {boardId, index}
     }
     
     const handleWithinDrop = (listId: string, dropIndex: number): void => {
@@ -21,6 +28,13 @@ export default function TaskListBoardMain() {
         if (dragTaskInfo.current.listId !== listId) return;
         reorderTasksWithinList(listId, dragTaskInfo.current.index, dropIndex);
         dragTaskInfo.current = null
+    }
+
+    const handleWithinDropTasklist = (boardId: string, dropIndex: number): void => {
+        if (!dragListInfo.current) return
+        if (dragListInfo.current.boardId !== boardId) return;
+        reorderListsWithinBoard(boardId, dragListInfo.current.index, dropIndex);
+        dragListInfo.current = null
     }
 
     function addNewTasklist(e: React.FormEvent<HTMLFormElement>) {
@@ -56,10 +70,17 @@ export default function TaskListBoardMain() {
                 id="tasklist-card"
                 className="w-full h-full flex justify-start gap-3 px-3"
             >
-                {tasklist.map((list) => (
+                {tasklist
+                    .filter(list => list.boardId === boardid)
+                    .sort((a, b) => a.position - b.position)
+                    .map((list, index) => (
                     <div
                         key={list.id}
                         className="min-w-75 bg-[#2D5C4F] text-neutral-50 h-full rounded-2xl pt-2 pb-1"
+                        draggable
+                        onDragStart = {() => handleDragWithinStartTasklist(boardid, index)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop = {() => handleWithinDropTasklist(boardid, index)}
                     >
                         <div className="px-3">
                             <strong>{list.title}</strong>

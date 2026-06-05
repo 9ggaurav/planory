@@ -20,6 +20,7 @@ const tasklistContext = createContext<{
     setTasklist: React.Dispatch<React.SetStateAction<TasklistType[]>>;
     updateTasklist: (id: string, updates: Partial<TasklistType>) => void;
     deleteTasklist: (id: string) => void;
+    reorderListsWithinBoard: (boardId: string, sourceIndex: number, destinationIndex: number) => void;
 } | null> (null);
 
 export function TasklistProvider({children}: {children: React.ReactNode}) {
@@ -58,6 +59,34 @@ export function TasklistProvider({children}: {children: React.ReactNode}) {
             )
         )
     }
+
+    function reorderListsWithinBoard(
+        boardId: string,
+        sourceIndex: number,
+        destinationIndex: number
+    ) {
+        setTasklist(prev => {
+            const boardLists = prev
+                .filter(list => list.boardId === boardId)
+                .sort((a, b) => a.position - b.position)
+
+            const [moved] = boardLists.splice(sourceIndex, 1);
+            boardLists.splice(destinationIndex, 0, moved);
+
+            const reorderedLists = boardLists.map((list, index) => ({
+                ...list,
+                position: index
+            }))
+
+            return prev.map(list => {
+                const updated = reorderedLists.find(
+                    l => l.id === list.id
+                );
+
+                return updated ?? list;
+            })
+        })
+    }
     
     function deleteTasklist(taskId: string) {
         setTasklist(prev => 
@@ -66,7 +95,7 @@ export function TasklistProvider({children}: {children: React.ReactNode}) {
     }
 
     return (
-        <tasklistContext.Provider value={{tasklist, setTasklist, createTasklist, updateTasklist, deleteTasklist}}>
+        <tasklistContext.Provider value={{tasklist, setTasklist, createTasklist, updateTasklist, deleteTasklist, reorderListsWithinBoard}}>
             {children}
         </tasklistContext.Provider>
     )
