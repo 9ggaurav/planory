@@ -15,24 +15,22 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     const [inboxTasks, setInboxTasks] = useState<inboxTaskType[]>([]);
     console.log(inboxTasks)
 
-    const nextPosition = Math.max(...inboxTasks.map(t => t.position), -1)+1;
-
     function createTask(title: string, taskListId: string) {
-        const trimmed = title.trim()
-        if (!trimmed) return
+    const trimmed = title.trim();
+    if (!trimmed) return;
 
-        setInboxTasks(prev => [...prev,
-            {
-                id: crypto.randomUUID(),
-                title: trimmed,
-                position: nextPosition,
-                taskListId: taskListId,
-                description: '',
-                isDone: false,
-                createdAt: new Date().toISOString()
-                
-            }]
-        )
+    setInboxTasks(prev => {
+        const nextPosition = Math.max(...prev.map(t => t.position), -1) + 1; // ✅ inside updater
+        return [...prev, {
+            id: crypto.randomUUID(),
+            title: trimmed,
+            position: nextPosition,
+            taskListId,
+            description: '',
+            isDone: false,
+            createdAt: new Date().toISOString()
+        }];
+    });
     }
 
     function updateTask(id: string, updates: Partial<inboxTaskType>) {
