@@ -5,7 +5,6 @@ import AddNewTask from "@/components/sections/ProjectBoard/components/addNewTask
 import { useState } from "react";
 import InboxTaskModal from "@/components/custom/EditInboxTaskModal";
 import { useParams } from "next/navigation";
-// import { useDragAndDrop } from "@/app/providers/useDragAndDrop";
 import { useDnD } from "@/app/providers/DragAndDropContext";
 
 
@@ -49,9 +48,9 @@ export default function TaskListBoardMain() {
                     .map((list, listIndex) => (
                         <div
                             key={list.id}
-                            className="min-w-75 bg-[#2D5C4F] text-neutral-50 h-full rounded-2xl pt-2 pb-1"
+                            className="min-w-75 bg-[#0a3528] text-neutral-50 h-full rounded-2xl pt-2 pb-1"
                             draggable
-                            onDragStart={(e) => {
+                            onDragStart={() => {
                                 // Only start list drag if no task drag is in progress
                                 if (dragTaskInfo.current) return;
                                 handleListDragStart(boardid, listIndex);
@@ -72,7 +71,7 @@ export default function TaskListBoardMain() {
                                 </AddNewTask>
                             </div>
 
-                            <div>
+                            <div className="flex flex-col-reverse">
                                 {inboxTasks
                                     .filter(task => task.taskListId === list.id)
                                     .sort((a, b) => a.position - b.position)
@@ -90,9 +89,13 @@ export default function TaskListBoardMain() {
                                                 e.stopPropagation(); 
                                                 handleTaskDrop(list.id, taskIndex);
                                             }}
-                                            className="bg-[#2D5C4F] text-[#8bd4bf] min-h-[35.99px] hover:bg-[#194c3e] w-[96%] px-2 py-1 rounded-sm text-left mx-3 hover:cursor-pointer"
-                                        >
+                                            className="bg-[#2D5C4F] text-[#8bd4bf] min-h-[35.99px] hover:bg-[#194c3e] w-[96%] px-2 my-2 rounded-sm text-left mx-3 hover:cursor-pointer">
+                                                <p 
+                                                className={`
+                                                    ${task.isDone ? 'line-through opacity-75' : ''} flex
+                                                `}>   
                                             {task.title}
+                                        </p>
                                         </div>
                                     ))}
                             </div>

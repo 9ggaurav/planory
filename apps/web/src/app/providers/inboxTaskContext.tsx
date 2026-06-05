@@ -1,7 +1,7 @@
 "use client";
 import {createContext, useContext, useState} from "react";
 import type { inboxTask as inboxTaskType } from "@repo/shared";
-import { taskLists } from "../b/[boardid]/mockData";
+import {tasks as defaultTasks} from "@/app/b/[boardid]/mockData"
 
 const inboxTaskContext = createContext<{
     inboxTasks: inboxTaskType[];
@@ -14,7 +14,7 @@ const inboxTaskContext = createContext<{
 
 
 export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
-    const [inboxTasks, setInboxTasks] = useState<inboxTaskType[]>([]);
+    const [inboxTasks, setInboxTasks] = useState<inboxTaskType[]>([...defaultTasks]);
     console.log(inboxTasks)
 
     function createTask(title: string, taskListId: string) {

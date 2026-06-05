@@ -1,6 +1,7 @@
 "use client";
 import {createContext, useContext, useState} from "react";
 import type { userBoard as BoardType } from "@repo/shared";
+import {boards as defaultBoards} from "@/app/b/[boardid]/mockData";
 
 const BoardContext = createContext<{
     boards: BoardType[];
@@ -8,29 +9,7 @@ const BoardContext = createContext<{
 } | null> (null);
 
 export function BoardProvider({ children }: {children: React.ReactNode}) {
-    const [boards, setBoards] = useState<BoardType[]>([
-    {
-      id: "1",
-      coverImage: "/cover2.jpg",
-      title: "Marketing Team",
-      tag: "Marketing",
-      isTemplate: false,
-      creator: "user12sdfsfsdf3",
-      isPublic: false,
-      liked: false
-    },
-    {
-      id: "2",
-      coverImage: "/cover.jpg",
-      title: "Product Team",
-      tag: "Product",
-      isTemplate: true,
-      creator: "user456",
-      isPublic: true,
-      liked: true
-
-    },
-  ]);
+    const [boards, setBoards] = useState<BoardType[]>([...defaultBoards]);
   const addBoard = (newBoard: BoardType) => {
     setBoards(prev => [...prev, newBoard]);
   };

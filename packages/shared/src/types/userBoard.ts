@@ -6,5 +6,6 @@ export type userBoard = {
     isTemplate: boolean,
     isPublic?: boolean;
     creator?: string;
-    liked: boolean
+    created_at: string,
+    updated_at: string,
 };

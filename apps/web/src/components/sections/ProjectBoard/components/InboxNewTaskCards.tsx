@@ -2,7 +2,6 @@
 import { useState } from "react"
 import { useInboxTask } from "@/app/providers/inboxTaskContext"
 import InboxTaskModal from "@/components/custom/EditInboxTaskModal"
-// import { useDragAndDrop } from "@/app/providers/useDragAndDrop"
 import { useDnD } from "@/app/providers/DragAndDropContext"
 
 export default function InboxNewTaskCards() {
@@ -25,7 +24,7 @@ export default function InboxNewTaskCards() {
                 draggable={true} 
                 className="bg-[#2D5C4F] text-[#8bd4bf] min-h-[35.99px] hover:bg-[#194c3e] w-[96%] px-2 py-1 rounded-sm text-left mx-3 hover:cursor-pointer" 
                 key={task.id}
-                onDragStart={(e) => {handleTaskDragStart("inbox", index, task.id)}}
+                onDragStart={() => {handleTaskDragStart("inbox", index, task.id)}}
                 onDragOver={(e)=> e.preventDefault()}
                 onDrop={() => handleTaskDrop("inbox", index)}
                 >

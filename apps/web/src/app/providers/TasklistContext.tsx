@@ -2,17 +2,7 @@
 import {createContext, useContext, useState} from "react";
 import type {Tasklist as TasklistType} from "@repo/shared";
 import { useParams } from "next/navigation";
-
-// type Tasklist = {
-//     id: string;
-//     title: string;
-//     position: number;
-//     description: string;
-//     isArchieved: boolean;
-//     boardId: string;
-//     createdAt: string;
-//     updatedAt: string;
-// }
+import { taskLists as defaultTasklists } from "@/app/b/[boardid]/mockData";
 
 const tasklistContext = createContext<{
     tasklist: TasklistType[];
@@ -24,8 +14,7 @@ const tasklistContext = createContext<{
 } | null> (null);
 
 export function TasklistProvider({children}: {children: React.ReactNode}) {
-    const [tasklist, setTasklist] = useState<TasklistType[]>([
-    ]);
+    const [tasklist, setTasklist] = useState<TasklistType[]>([...defaultTasklists]);
     const boardid = useParams().boardid as string;
 
     const nextPosition = Math.max(...tasklist.map(t => t.position), -1)+1;
