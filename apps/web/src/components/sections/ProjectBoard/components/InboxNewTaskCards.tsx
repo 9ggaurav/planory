@@ -1,28 +1,14 @@
 "use client"
-import type {inboxTask as inboxTaskType } from '@repo/shared';
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { useInboxTask } from "@/app/providers/inboxTaskContext"
 import InboxTaskModal from "@/components/custom/EditInboxTaskModal"
-// import { GripVertical } from 'lucide-react';
+// import { useDragAndDrop } from "@/app/providers/useDragAndDrop"
+import { useDnD } from "@/app/providers/DragAndDropContext"
 
 export default function InboxNewTaskCards() {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-    const {inboxTasks, reorderTasksWithinList} = useInboxTask();
-    const dragWithinIndex = useRef<number |null>(null);
-
-    const handleDragWithinStart = (index: number) => {
-        dragWithinIndex.current = index;
-    }
-
-    const handleWithinDrop = (dropIndex: number): void => {
-        if (dragWithinIndex.current === null) return;
-        reorderTasksWithinList(
-            "inbox",
-            dragWithinIndex.current,
-            dropIndex
-        )
-        dragWithinIndex.current = null;
-    }
+    const {inboxTasks} = useInboxTask();
+    const {handleTaskDragStart, handleTaskDrop} = useDnD();
 
     const InboxOnlyTasks = inboxTasks.filter(
         task => task.taskListId === "inbox"
@@ -39,9 +25,9 @@ export default function InboxNewTaskCards() {
                 draggable={true} 
                 className="bg-[#2D5C4F] text-[#8bd4bf] min-h-[35.99px] hover:bg-[#194c3e] w-[96%] px-2 py-1 rounded-sm text-left mx-3 hover:cursor-pointer" 
                 key={task.id}
-                onDragStart={() => handleDragWithinStart(index)}
+                onDragStart={(e) => {handleTaskDragStart("inbox", index, task.id)}}
                 onDragOver={(e)=> e.preventDefault()}
-                onDrop={() => handleWithinDrop(index)}
+                onDrop={() => handleTaskDrop("inbox", index)}
                 >
                 <p 
                 className={`

@@ -1,6 +1,7 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { InboxTaskProvider } from "@/app/providers/inboxTaskContext";
 import { TasklistProvider } from "@/app/providers/TasklistContext";
+import { DragAndDropProvider } from "@/app/providers/DragAndDropContext";
 
 export default function RootLayout({
   children,
@@ -9,11 +10,13 @@ export default function RootLayout({
 }>) {
   return (
         <TooltipProvider>
-          <InboxTaskProvider>
-            <TasklistProvider>
-              {children}
-            </TasklistProvider>
-          </InboxTaskProvider>
+            <InboxTaskProvider>
+              <TasklistProvider>
+                <DragAndDropProvider>
+                  {children}
+                </DragAndDropProvider>
+              </TasklistProvider>
+            </InboxTaskProvider>
         </TooltipProvider>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import {createContext, useContext, useState} from "react";
 import type { inboxTask as inboxTaskType } from "@repo/shared";
+import { taskLists } from "../b/[boardid]/mockData";
 
 const inboxTaskContext = createContext<{
     inboxTasks: inboxTaskType[];
@@ -8,6 +9,7 @@ const inboxTaskContext = createContext<{
     updateTask: (id: string, updates: Partial<inboxTaskType>) => void;
     deleteTask: (id: string) => void;
     reorderTasksWithinList: (TaskListId: string, sourceIndex: number, destinationIndex: number) => void;
+    moveTaskToList: (taskId: string, targetListId: string) => void;
 } | null> (null);
 
 
@@ -74,6 +76,18 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
         })
     }
 
+    function moveTaskToList(taskId: string, targetListId: string) {
+        setInboxTasks(prev => {
+            const targetListTasks = prev.filter(t => t.taskListId === targetListId)
+            const nextPosition = Math.max(...targetListTasks.map(t => t.position), -1)+1;
+            return prev.map(task => 
+                task.id === taskId
+                    ? { ...task, taskListId: targetListId, position: nextPosition}
+                    : task
+            )
+        })
+    }
+
     function deleteTask(taskId: string) {
         setInboxTasks(prev =>
             prev.filter(task => task.id !== taskId)
@@ -81,7 +95,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     }
 
   return (
-    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask, reorderTasksWithinList }}>
+    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask, reorderTasksWithinList, moveTaskToList }}>
         {children}
     </inboxTaskContext.Provider>
   )
