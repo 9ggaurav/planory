@@ -5,12 +5,18 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useBoards } from "@/app/providers/BoardContext"
+import { useParams } from "next/navigation";
 
 export default function TasklistBoardNavbar() {
+    const {boards} = useBoards();
+    const boardid = useParams().boardid as string;
+
+    const currentBoard = boards.find(board => board.id === boardid);
     return (
         <header className="h-16 flex justify-between backdrop-blur-md bg-white/30 pl-3 pt-2 rounded-2xl">
                 <div className="flex justify-start gap-2">
-                    <h1 className="text-[20px] font-medium"> Tasklist Name </h1>
+                    <h1 className="text-[20px] font-medium"> {currentBoard?.title} </h1>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div className="flex px-4 gap-0 hover:cursor-pointer hover:bg-white/40 mb-2">

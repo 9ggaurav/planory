@@ -22,6 +22,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import { useState } from "react"
 
+import { Ellipsis } from "lucide-react"
+import MoreActions from "./MoreActionsOnTask"
+
 type childProp = {
     selectedTaskId: string | null;
     setSelectedTaskId: React.Dispatch<React.SetStateAction<string | null>>;
@@ -30,6 +33,11 @@ type childProp = {
 export default function InboxTaskModal({selectedTaskId, setSelectedTaskId}: childProp) {
     const {inboxTasks, updateTask} = useInboxTask();
     const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
+    const [isMoreActionsOpen, setIsMoreActionsOpen] = useState<boolean>(false);
+
+    const handleMoreActionsChange = (open: boolean) => {
+      setIsMoreActionsOpen(open);
+    }
 
     const selectedTask: inboxTaskType | undefined = inboxTasks.find(
       task => task.id === selectedTaskId
@@ -72,10 +80,16 @@ export default function InboxTaskModal({selectedTaskId, setSelectedTaskId}: chil
           <Dialog open={!!selectedTask} onOpenChange={handleOpenChange}>
             <DialogContent className="fixed left-3/11">
               <form onSubmit={handleSubmitEdit}>
-                <DialogHeader>
-                  <p className="text-sm font-medium text-muted-foreground">
+                <DialogHeader className="">
+                  <div className="flex justify-between pr-8">
+                    <p className="text-sm font-medium text-muted-foreground">
                     In your Inbox
-                  </p>
+                    </p>
+                    <span onClick={()=>setIsMoreActionsOpen(true)} className="">
+                      <Ellipsis />
+                    </span>
+                    <MoreActions isMoreActionsOpen={isMoreActionsOpen} handleMoreActionsChange={handleMoreActionsChange} taskId = {selectedTaskId} />
+                  </div>
                   <FieldLabel className="border-0 shadow-none">
                     <Field orientation="horizontal">
                       <Input
