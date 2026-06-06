@@ -17,7 +17,13 @@ type childProp = {
 }
 
 export default function MoreActions({isMoreActionsOpen, handleMoreActionsChange, taskId}: childProp) {
-    const {deleteTask} = useInboxTask();
+    const {deleteTask, archieveTask} = useInboxTask();
+
+    const handleArchieve = (id: string|null) => {
+        if (!id) return;
+        archieveTask(id);
+        handleMoreActionsChange(false)
+    }
 
     const handleDelete = (taskId: string | null) => {
         if (!taskId) return
@@ -29,6 +35,7 @@ export default function MoreActions({isMoreActionsOpen, handleMoreActionsChange,
             <DialogContent className="fixed left-3/6">
                 <DialogTitle>Dialog modal</DialogTitle>
                 <div>
+                    <Button onClick={()=> handleArchieve(taskId)}>Archieve</Button>
                     <Button onClick={() => handleDelete(taskId)} className="primary">Delete Task</Button>
                 </div>
             </DialogContent>
