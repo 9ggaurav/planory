@@ -29,6 +29,8 @@ export const boards: userBoardType[] = [
 
 // 8 Sample Tasklists (Distributed across Board 1 and Board 2)
 export const taskLists: tasklistType[] = [
+  { id: "inbox", title: "inbox", position: -1, description: "inbox tasks", isArchieved: false, boardId: "None", createdAt: "start", updatedAt: "start"},
+  { id: "archieve", title: "archieve", position: -2, description: "archieved tasks", isArchieved: false, boardId: "None", createdAt: "start", updatedAt: "start"},
   // Board 1: Alpha
   { id: "tl-1", title: "Backlog", position: 1, description: "Incoming features and ideas", isArchieved: false, boardId: "1", createdAt: "2026-04-25T11:00:00Z", updatedAt: null },
   { id: "tl-2", title: "In Progress", position: 2, description: "Active operational tasks", isArchieved: false, boardId: "1", createdAt: "2026-04-25T11:05:00Z", updatedAt: null },

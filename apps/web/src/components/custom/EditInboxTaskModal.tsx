@@ -1,169 +1,216 @@
 "use client"
-import type { inboxTask as inboxTaskType } from "@repo/shared"
+import type { inboxTask as inboxTaskType, Tasklist as tasklistType } from "@repo/shared"
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogTitle
 } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import {
-  Field,
-  FieldContent,
-  FieldLabel,
-} from "@/components/ui/field";
-import { useInboxTask } from "@/app/providers/inboxTaskContext"
-import { ReceiptText } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
-import { DialogDescription } from "@radix-ui/react-dialog"
+import { useInboxTask } from "@/app/providers/inboxTaskContext"
 import { useState } from "react"
-
-import { Ellipsis } from "lucide-react"
 import MoreActions from "./MoreActionsOnTask"
+import { useTasklist } from "@/app/providers/TasklistContext"
 
 type childProp = {
     selectedTaskId: string | null;
     setSelectedTaskId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export default function InboxTaskModal({selectedTaskId, setSelectedTaskId}: childProp) {
-    const {inboxTasks, updateTask} = useInboxTask();
+export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId }: childProp) {
+    const { inboxTasks, updateTask } = useInboxTask();
+    const {tasklist} = useTasklist()
     const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
     const [isMoreActionsOpen, setIsMoreActionsOpen] = useState<boolean>(false);
 
+
     const handleMoreActionsChange = (open: boolean) => {
-      setIsMoreActionsOpen(open);
+        setIsMoreActionsOpen(open);
     }
 
     const selectedTask: inboxTaskType | undefined = inboxTasks.find(
-      task => task.id === selectedTaskId
+        task => task.id === selectedTaskId
     )
+    const currentTasklist: tasklistType|undefined = tasklist.find(list => list.id === selectedTask?.taskListId);
 
     function handleOpenChange(open: boolean) {
         if (!open) {
-        setSelectedTaskId(null);
-        setIsEditingDescription(false); 
+            setSelectedTaskId(null);
+            setIsEditingDescription(false);
         }
     }
 
-
     function handleSubmitEdit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        if(!selectedTaskId) return;
+        if (!selectedTaskId) return;
 
         const formData = new FormData(e.currentTarget);
-
         const description = formData.get("description");
         const title = formData.get("title");
 
-        if (typeof description != "string") return;
-        if (typeof title != "string") return;
-        
-        updateTask(selectedTask!.id, {title, description});
-        setIsEditingDescription(false)
+        if (typeof description !== "string") return;
+        if (typeof title !== "string") return;
+
+        updateTask(selectedTask!.id, { title, description });
+        setIsEditingDescription(false);
     }
 
     function handleTaskCompletion(e: React.ChangeEvent<HTMLInputElement>) {
-      if (!selectedTask) return;
-      updateTask(selectedTask.id, {
-        isDone: e.target.checked,
-      })
-
+        if (!selectedTask) return;
+        updateTask(selectedTask.id, { isDone: e.target.checked });
     }
 
-    return(
-        <>
-          <Dialog open={!!selectedTask} onOpenChange={handleOpenChange}>
-            <DialogContent className="fixed left-3/11">
-              <form onSubmit={handleSubmitEdit}>
-                <DialogHeader className="">
-                  <div className="flex justify-between pr-8">
-                    <p className="text-sm font-medium text-muted-foreground">
-                    In your Inbox
-                    </p>
-                    <span onClick={()=>setIsMoreActionsOpen(true)} className="">
-                      <Ellipsis />
-                    </span>
-                    <MoreActions isMoreActionsOpen={isMoreActionsOpen} handleMoreActionsChange={handleMoreActionsChange} taskId = {selectedTaskId} />
-                  </div>
-                  <FieldLabel className="border-0 shadow-none">
-                    <Field orientation="horizontal">
-                      <Input
-                        className="size-[1.3rem] rounded-2xl"
-                        type="checkbox"
-                        id="isTaskComplete"
-                        name="isTaskCompleteCheckBox"
-                        checked={selectedTask?.isDone ?? false}
-                        onChange={handleTaskCompletion}
-                      />
-                      <FieldContent>
-                        {isEditingDescription ? (
-                          <Input
-                            defaultValue={selectedTask?.title}
-                            name="title"
-                            id="title-input"
-                            className="ring-0 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none" 
-                          />
-                        ) : (
-                          <DialogTitle className={`text-[20px] font-semibold ${selectedTask?.isDone ? 'line-through' : ''}`}>
-                            {selectedTask?.title}
-                          </DialogTitle>
-                  )}
-                        
-                      </FieldContent>
-                    </Field>
-                  </FieldLabel>
-                </DialogHeader>
+    return (
+        <Dialog open={!!selectedTask} onOpenChange={handleOpenChange}>
+            <DialogContent className="p-0 gap-0 max-w-125 rounded-2xl border border-neutral-200 bg-white shadow-md overflow-hidden [&>button]:hidden">
+                <form onSubmit={handleSubmitEdit}>
 
-                <div className="mt-2">
-                  <Label
-                    className="text-[16px] flex justify-between"
-                    htmlFor="description-textarea"
-                  >
-                    <div className="flex gap-1 text-neutral-500">
-                      <ReceiptText />
-                      <span>Description</span>
+                  <DialogTitle className="sr-only"></DialogTitle>
+
+                    {/* Header */}
+                    <div className="px-5 pt-5 pb-0">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-400 bg-neutral-100 px-2.5 py-1 rounded-full">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                                </svg>
+                                {
+                                  currentTasklist?.title
+                                }
+                            </span>
+
+                            <div className="flex items-center gap-1">
+                                <div className="relative">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsMoreActionsOpen(true)}
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-colors"
+                                        aria-label="More actions"
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                            <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+                                        </svg>
+                                    </button>
+                                    <MoreActions
+                                        isMoreActionsOpen={isMoreActionsOpen}
+                                        handleMoreActionsChange={handleMoreActionsChange}
+                                        taskId={selectedTaskId}
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleOpenChange(false)}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-colors"
+                                    aria-label="Close"
+                                >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Title row with checkbox */}
+                        <div className="flex items-start gap-3 mb-4">
+                            <label className="mt-0.75 shrink-0 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    id="isTaskComplete"
+                                    name="isTaskCompleteCheckBox"
+                                    checked={selectedTask?.isDone ?? false}
+                                    onChange={handleTaskCompletion}
+                                    className="sr-only"
+                                />
+                                <div className={`w-4.5 h-4.5 rounded-[5px] border-[1.5px] flex items-center justify-center transition-colors ${
+                                    selectedTask?.isDone
+                                        ? "bg-emerald-500 border-emerald-500"
+                                        : "border-neutral-300 bg-white hover:border-neutral-400"
+                                }`}>
+                                    {selectedTask?.isDone && (
+                                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                                            <path d="M1 4L3.8 7L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                    )}
+                                </div>
+                            </label>
+
+                            {isEditingDescription ? (
+                                <Input
+                                    defaultValue={selectedTask?.title}
+                                    name="title"
+                                    id="title-input"
+                                    className="text-[17px] font-medium border-0 p-0 h-auto ring-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-neutral-900 bg-transparent"
+                                />
+                            ) : (
+                                <h2 className={`text-[17px] font-medium leading-snug text-neutral-900 ${selectedTask?.isDone ? "line-through text-neutral-400" : ""}`}>
+                                    {selectedTask?.title}
+                                </h2>
+                            )}
+                        </div>
                     </div>
-                    {!isEditingDescription && (
-                      <Button
-                        type="button"
-                        onClick={() => setIsEditingDescription(true)} 
-                        className="bg-neutral-200 text-neutral-950 px-2 py-1 hover:cursor-pointer hover:bg-neutral-300"
-                      >
-                        Edit
-                      </Button>
-                    )}
-                  </Label>
 
-                  {isEditingDescription ? (
-                    <Textarea
-                      defaultValue={selectedTask?.description}
-                      name="description"
-                      id="description-textarea"
-                      placeholder="Add some more detailed description here..."
-                    />
-                  ) : (
-                    <DialogDescription className="text-neutral-400">
-                        {selectedTask?.description ?? "No Description"}
-                    </DialogDescription>
-                  )}
-                </div>
+                    {/* Divider */}
+                    <div className="h-px bg-neutral-100" />
 
-                <DialogFooter className="mt-4">
-                  <DialogClose asChild>
-                    <Button type="button" variant="outline">
-                      Close
-                    </Button>
-                  </DialogClose>
-                  {isEditingDescription && <Button type="submit">Save</Button>}
-                </DialogFooter>
-              </form>
+                    {/* Body */}
+                    <div className="px-5 py-4 space-y-4">
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 uppercase tracking-wider">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>
+                                    </svg>
+                                    Description
+                                </div>
+                                {!isEditingDescription && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEditingDescription(true)}
+                                        className="text-xs text-neutral-400 hover:text-neutral-600 bg-neutral-100 hover:bg-neutral-200 px-2.5 py-1 rounded-md transition-colors font-medium"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
+                            </div>
+
+                            {isEditingDescription ? (
+                                <Textarea
+                                    defaultValue={selectedTask?.description}
+                                    name="description"
+                                    id="description-textarea"
+                                    placeholder="Add a more detailed description..."
+                                    className="resize-none text-sm text-neutral-700 border-neutral-200 rounded-lg focus-visible:ring-1 focus-visible:ring-neutral-300 focus-visible:ring-offset-0 min-h-22.5 bg-neutral-50"
+                                />
+                            ) : (
+                                <p className="text-sm text-neutral-500 leading-relaxed">
+                                    {selectedTask?.description || "No description"}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-5 py-3.5 border-t border-neutral-100 flex items-center justify-between bg-neutral-50/60">
+                        <button
+                            type="button"
+                            onClick={() => handleOpenChange(false)}
+                            className="text-sm text-neutral-400 hover:text-neutral-600 bg-white border border-neutral-200 hover:border-neutral-300 px-3.5 py-1.5 rounded-lg transition-colors font-medium"
+                        >
+                            Close
+                        </button>
+
+                        {isEditingDescription && (
+                            <button
+                                type="submit"
+                                className="text-sm font-medium text-white bg-neutral-900 hover:bg-neutral-700 px-4 py-1.5 rounded-lg transition-colors"
+                            >
+                                Save changes
+                            </button>
+                        )}
+                    </div>
+
+                </form>
             </DialogContent>
-          </Dialog>
-        </>
-    )
+        </Dialog>
+    );
 }
