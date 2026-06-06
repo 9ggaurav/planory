@@ -6,40 +6,57 @@ import { useDnD } from "@/app/providers/DragAndDropContext"
 
 export default function InboxNewTaskCards() {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-    const {inboxTasks} = useInboxTask();
-    const {handleTaskDragStart, handleTaskDrop} = useDnD();
+    const { inboxTasks } = useInboxTask();
+    const { handleTaskDragStart, handleTaskDrop } = useDnD();
 
     const InboxOnlyTasks = inboxTasks.filter(
         task => task.taskListId === "inbox"
     ).sort(
         (a, b) => a.position - b.position
-    )
+    );
 
     return (
-        <div className="w-full flex justify-start flex-col-reverse items-center gap-1 overflow-y-auto">
-            {InboxOnlyTasks && InboxOnlyTasks.map((task, index) => (
-            <div 
-                onClick={() => setSelectedTaskId(task.id)} 
-                id="new-inbox-task-card" 
-                draggable={true} 
-                className="bg-[#2D5C4F] text-[#8bd4bf] min-h-[35.99px] hover:bg-[#194c3e] w-[96%] px-2 py-1 rounded-sm text-left mx-3 hover:cursor-pointer" 
-                key={task.id}
-                onDragStart={() => {handleTaskDragStart("inbox", index, task.id)}}
-                onDragOver={(e)=> e.preventDefault()}
-                onDrop={() => handleTaskDrop("inbox", index)}
+        <div className="w-full flex flex-col gap-1.5 px-2 overflow-y-auto">
+            {InboxOnlyTasks.map((task, index) => (
+                <div
+                    onClick={() => setSelectedTaskId(task.id)}
+                    id="new-inbox-task-card"
+                    draggable={true}
+                    key={task.id}
+                    onDragStart={() => handleTaskDragStart("inbox", index, task.id)}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => handleTaskDrop("inbox", index)}
+                    className={`
+                        group flex items-start gap-2 bg-white rounded-xl border px-3 py-2.5
+                        cursor-pointer select-none transition-all duration-150
+                        hover:border-neutral-300 hover:shadow-sm active:scale-[0.98]
+                        ${task.isDone
+                            ? "border-neutral-200/60 bg-neutral-50/80"
+                            : "border-neutral-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                        }
+                    `}
                 >
-                <p 
-                className={`
-                    ${task.isDone ? 'line-through opacity-75' : ''} flex
-                `}
+                    <div className={`mt-0.75 w-3 h-3 rounded-full border shrink-0 flex items-center justify-center transition-colors ${
+                        task.isDone
+                            ? "bg-emerald-500 border-emerald-500"
+                            : "border-neutral-300 group-hover:border-neutral-400"
+                    }`}>
+                        {task.isDone && (
+                            <svg width="7" height="5.5" viewBox="0 0 8 6" fill="none" aria-hidden="true">
+                                <path d="M1 3L3 5L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        )}
+                    </div>
+                    <p className={`text-[13px] leading-snug flex-1 ${
+                        task.isDone ? "line-through text-neutral-400" : "text-neutral-700"
+                    }`}>
+                        {task.title}
+                    </p>
+                </div>
+            ))}
 
-                >   
-                    {task.title}
-                </p>
-            </div>
-        ))}
             <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} />
         </div>
-    )
+    );
 }
 

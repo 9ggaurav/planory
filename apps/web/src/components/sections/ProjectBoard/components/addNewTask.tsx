@@ -1,9 +1,4 @@
-// Provides a button component to add new task, currently just being used 
-// for inbox but can be used to add new tasks in other tasklists 
-// just pass function which will add the task to the respective tasklist
 
-import { Button } from "@/components/ui/button";
-import { clsx } from "clsx";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
 
@@ -13,7 +8,7 @@ type childProps = {
     className?: string;
 }
 
-export default function AddNewTask({addNewTask, children}: childProps) {
+export default function AddNewTask({ addNewTask, children }: childProps) {
     const [isAddNewTaskDisplayed, setIsAddNewTaskDisplayed] = useState(false);
     const addTaskButtonRef = useRef<HTMLInputElement>(null);
 
@@ -21,30 +16,54 @@ export default function AddNewTask({addNewTask, children}: childProps) {
         if (isAddNewTaskDisplayed) {
             addTaskButtonRef.current?.focus();
         }
-    }, [isAddNewTaskDisplayed])
+    }, [isAddNewTaskDisplayed]);
 
     function handleClick() {
-        setIsAddNewTaskDisplayed(!isAddNewTaskDisplayed)
+        setIsAddNewTaskDisplayed(!isAddNewTaskDisplayed);
     }
 
-    return(
-        <div id="addNewTaskButton-inboxSection" className="flex justify-center w-full mb-2">
-            <Button id="add-new-inbox-task-card" onClick={handleClick} className={clsx(
-                'bg-[#2D5C4F] text-[#8bd4bf] hover:bg-[#194c3e] w-[96%] text-left mx-3 hover:cursor-pointer',
-                isAddNewTaskDisplayed && 'hidden',
-                !isAddNewTaskDisplayed && 'inline'
-            )}>{children}</Button>
-            {isAddNewTaskDisplayed && (
-                <div className="bg-[#2D5C4F] w-[96%] max-[96%] px-2 py-1 rounded-xl">
-                    <form onSubmit={addNewTask} action="">
-                        <Input autoComplete="off" placeholder="Add new task" ref={addTaskButtonRef} name="title" className="text-white" />
-                        <div onMouseLeave={handleClick} className="flex gap-1 text-[12px] mt-1 ">
-                            <Button className="hover:cursor-pointer bg-[#E07A5F] text-white hover:bg-[#c64927]" type="submit" >Add</Button>
-                            <Button className="hover:cursor-pointer bg-[#2D5C4F] hover:bg-[#3b6b5d]" onClick={handleClick}>Cancel</Button>
+    return (
+        <div id="addNewTaskButton-inboxSection" className="w-full px-2 mb-1">
+            {!isAddNewTaskDisplayed ? (
+                <button
+                    id="add-new-inbox-task-card"
+                    onClick={handleClick}
+                    type="button"
+                    className="w-full flex items-center gap-1.5 px-2 py-2 rounded-lg text-[12px] font-medium text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200/50 transition-colors text-left"
+                >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    {children}
+                </button>
+            ) : (
+                <div className="bg-white border border-neutral-200 rounded-xl p-2.5 shadow-sm">
+                    <form onSubmit={(e) => { addNewTask(e); setIsAddNewTaskDisplayed(false); }}>
+                        <Input
+                            autoComplete="off"
+                            placeholder="Task name..."
+                            ref={addTaskButtonRef}
+                            name="title"
+                            className="text-[13px] text-neutral-800 border-neutral-200 bg-neutral-50 focus-visible:ring-1 focus-visible:ring-neutral-300 focus-visible:ring-offset-0 rounded-lg h-8 px-2.5 placeholder:text-neutral-400"
+                        />
+                        <div className="flex gap-1.5 mt-2">
+                            <button
+                                type="submit"
+                                className="text-[12px] font-medium text-white bg-neutral-900 hover:bg-neutral-700 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                                Add
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleClick}
+                                className="text-[12px] font-medium text-neutral-500 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </form>
                 </div>
             )}
         </div>
-    )
+    );
 }

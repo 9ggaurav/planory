@@ -16,8 +16,6 @@ export default function TaskListBoardMain() {
     const boardid = useParams().boardid as string;
     const { dragTaskInfo, handleTaskDragStart, handleTaskDrop, handleContainerDrop, handleListDragStart } = useDnD();
 
-    // ── Form handlers ───────────────────────────────────────────────────────
-
     function addNewTasklist(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -36,77 +34,134 @@ export default function TaskListBoardMain() {
         e.currentTarget.reset();
     }
 
+    const filteredLists = tasklist
+        .filter(list => list.boardId === boardid)
+        .sort((a, b) => a.position - b.position);
+
     return (
-        <div className="flex justify-start gap-3">
-            <div
-                id="tasklist-card"
-                className="w-full h-full flex justify-start gap-3 px-3"
-            >
-                {tasklist
-                    .filter(list => list.boardId === boardid)
-                    .sort((a, b) => a.position - b.position)
-                    .map((list, listIndex) => (
-                        <div
-                            key={list.id}
-                            className="min-w-75 bg-[#0a3528] text-neutral-50 h-full rounded-2xl pt-2 pb-1"
-                            draggable
-                            onDragStart={() => {
-                                // Only start list drag if no task drag is in progress
-                                if (dragTaskInfo.current) return;
-                                handleListDragStart(boardid, listIndex);
-                            }}
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={(e) => {
-                                e.preventDefault();
-                                handleContainerDrop(list.id, boardid,  listIndex)
-                            }}
-                        >
-                            <div className="px-3">
-                                <strong>{list.title}</strong>
-                            </div>
+        <div className="flex justify-start gap-3 h-full px-4 py-4 overflow-x-auto">
 
-                            <div>
-                                <AddNewTask addNewTask={(e) => handleAddTask(e, list.id)}>
-                                    + add new Task
-                                </AddNewTask>
-                            </div>
+            {filteredLists.map((list, listIndex) => {
+                const listTasks = inboxTasks
+                    .filter(task => task.taskListId === list.id)
+                    .sort((a, b) => a.position - b.position);
 
-                            <div className="flex flex-col-reverse">
-                                {inboxTasks
-                                    .filter(task => task.taskListId === list.id)
-                                    .sort((a, b) => a.position - b.position)
-                                    .map((task, taskIndex) => (
-                                        <div
-                                            key={task.id}
-                                            draggable
-                                            onClick={() => setSelectedTaskId(task.id)}
-                                            onDragStart={(e) => {
-                                                e.stopPropagation(); // prevent list drag from firing
-                                                handleTaskDragStart(list.id, taskIndex, task.id);
-                                            }}
-                                            onDragOver={(e) => e.preventDefault()}
-                                            onDrop={(e) => {
-                                                e.stopPropagation(); 
-                                                handleTaskDrop(list.id, taskIndex);
-                                            }}
-                                            className="bg-[#2D5C4F] text-[#8bd4bf] min-h-[35.99px] hover:bg-[#194c3e] w-[96%] px-2 my-2 rounded-sm text-left mx-3 hover:cursor-pointer">
-                                                <p 
-                                                className={`
-                                                    ${task.isDone ? 'line-through opacity-75' : ''} flex
-                                                `}>   
+                const doneCount = listTasks.filter(t => t.isDone).length;
+
+                return (
+                    <div
+                        key={list.id}
+                        className="shrink-0 w-68 flex flex-col rounded-2xl bg-[#f5f5f3] border border-neutral-200/80 max-h-full"
+                        draggable
+                        onDragStart={() => {
+                            if (dragTaskInfo.current) return;
+                            handleListDragStart(boardid, listIndex);
+                        }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            handleContainerDrop(list.id, boardid, listIndex);
+                        }}
+                    >
+                        {/* Column header */}
+                        <div className="px-3.5 pt-3.5 pb-2 flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <span className="font-semibold text-[13px] text-neutral-800 truncate tracking-[-0.01em]">
+                                    {list.title}
+                                </span>
+                                {listTasks.length > 0 && (
+                                    <span className="text-[11px] font-medium text-neutral-400 bg-neutral-200/70 px-1.5 py-0.5 rounded-full shrink-0">
+                                        {doneCount}/{listTasks.length}
+                                    </span>
+                                )}
+                            </div>
+                            <button
+                                className="w-6 h-6 rounded-md flex items-center justify-center text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200/60 transition-colors shrink-0"
+                                aria-label="List options"
+                            >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Add task — sits right below header */}
+                        <div className="px-2 pb-1">
+                            <AddNewTask addNewTask={(e) => handleAddTask(e, list.id)}>
+                                <span className="flex items-center gap-1 text-[12px] font-medium text-neutral-400 hover:text-neutral-600 transition-colors">
+                                    Add task
+                                </span>
+                            </AddNewTask>
+                        </div>
+
+                        {/* Task cards */}
+                        <div className="flex flex-col gap-1.5 px-2 pb-2.5 overflow-y-auto flex-1">
+                            {listTasks.map((task, taskIndex) => (
+                                <div
+                                    key={task.id}
+                                    draggable
+                                    onClick={() => setSelectedTaskId(task.id)}
+                                    onDragStart={(e) => {
+                                        e.stopPropagation();
+                                        handleTaskDragStart(list.id, taskIndex, task.id);
+                                    }}
+                                    onDragOver={(e) => e.preventDefault()}
+                                    onDrop={(e) => {
+                                        e.stopPropagation();
+                                        handleTaskDrop(list.id, taskIndex);
+                                    }}
+                                    className={`
+                                        group relative bg-white rounded-xl border px-3 py-2.5 cursor-pointer
+                                        hover:border-neutral-300 hover:shadow-sm
+                                        active:scale-[0.98] active:shadow-none
+                                        transition-all duration-150 select-none
+                                        ${task.isDone
+                                            ? "border-neutral-200/60 bg-neutral-50/80"
+                                            : "border-neutral-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                                        }
+                                    `}
+                                >
+                                    <div className="flex items-start gap-2">
+                                        {/* Completion dot indicator */}
+                                        <div className={`mt-0.75 w-3 h-3 rounded-full border shrink-0 flex items-center justify-center transition-colors ${
+                                            task.isDone
+                                                ? "bg-emerald-500 border-emerald-500"
+                                                : "border-neutral-300 group-hover:border-neutral-400"
+                                        }`}>
+                                            {task.isDone && (
+                                                <svg width="7" height="5.5" viewBox="0 0 8 6" fill="none" aria-hidden="true">
+                                                    <path d="M1 3L3 5L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                                </svg>
+                                            )}
+                                        </div>
+
+                                        <p className={`text-[13px] leading-snug flex-1 ${
+                                            task.isDone
+                                                ? "line-through text-neutral-400"
+                                                : "text-neutral-700"
+                                        }`}>
                                             {task.title}
                                         </p>
-                                        </div>
-                                    ))}
-                            </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    </div>
+                );
+            })}
 
-                <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} />
+            <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} />
 
-                <div className="w-75 min-w-60">
+            {/* Add new list column */}
+            <div className="shrink-0 w-68">
+                <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-100/50 hover:bg-neutral-100 hover:border-neutral-400 transition-colors">
                     <AddNewTask addNewTask={addNewTasklist}>
-                        {tasklist.length === 0 ? "Add a list" : "Add another list"}
+                        <span className="flex items-center gap-1.5 text-[13px] font-medium text-neutral-400 hover:text-neutral-600 transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            {tasklist.length === 0 ? "Add a list" : "Add another list"}
+                        </span>
                     </AddNewTask>
                 </div>
             </div>
