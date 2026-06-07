@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useBoards } from "@/app/providers/BoardContext"
+import { useBoards } from "@/providers/BoardContext"
 import { useParams } from "next/navigation";
 
 export default function TasklistBoardNavbar() {

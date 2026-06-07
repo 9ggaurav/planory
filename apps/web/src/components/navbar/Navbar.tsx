@@ -5,8 +5,8 @@ import { Menu, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import type { userBoard as BoardType } from '@repo/shared';
-import { useBoards } from "@/app/providers/BoardContext"
-import AddNewSection from '@/components/custom/AddNewBoard';
+import { useBoards } from "@/providers/BoardContext"
+import AddNewBoard from '@/features/board/components/AddNewBoard';
 import Link from 'next/link';
 
 const navLinks = [
@@ -84,7 +84,7 @@ export default function NavBar() {
 
         {/* Create button — hidden on mobile */}
         <div className="hidden md:block shrink-0">
-          <AddNewSection
+          <AddNewBoard
             boardData={boardData}
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}
@@ -140,7 +140,7 @@ export default function NavBar() {
           ))}
 
           <div className="mt-1">
-            <AddNewSection
+            <AddNewBoard
               boardData={boardData}
               isDialogOpen={isDialogOpen}
               setIsDialogOpen={setIsDialogOpen}
