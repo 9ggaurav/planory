@@ -40,7 +40,7 @@ export default function MoreActions({ isMoreActionsOpen, handleMoreActionsChange
     return (
         <div
             ref={ref}
-            className="absolute right-10 top-8 z-50 w-48 rounded-xl border border-neutral-200 bg-white shadow-sm py-1 overflow-hidden"
+            className="absolute left-full top-0 z-50 w-48 rounded-xl border border-neutral-200 bg-white shadow-sm py-1 overflow-hidden"
         >
             <button
                 type="button"

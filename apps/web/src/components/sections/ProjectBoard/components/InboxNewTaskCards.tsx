@@ -6,6 +6,7 @@ import { useDnD } from "@/app/providers/DragAndDropContext"
 
 export default function InboxNewTaskCards() {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+    const [modalPosition, setModalPosition] = useState<{top: number; left: number}>({top: 0, left: 0});
     const { inboxTasks } = useInboxTask();
     const { handleTaskDragStart, handleTaskDrop } = useDnD();
 
@@ -19,7 +20,15 @@ export default function InboxNewTaskCards() {
         <div className="w-full flex flex-col gap-1.5 px-2 overflow-y-auto">
             {InboxOnlyTasks.map((task, index) => (
                 <div
-                    onClick={() => setSelectedTaskId(task.id)}
+                    onClick={(e) => {
+                        setSelectedTaskId(task.id)
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setModalPosition({
+                            // top: rect.bottom + window.scrollY - 24,
+                            top: 200,
+                            left: rect.left + window.scrollX + 500,
+                        })
+                    }}
                     id="new-inbox-task-card"
                     draggable={true}
                     key={task.id}
@@ -55,7 +64,7 @@ export default function InboxNewTaskCards() {
                 </div>
             ))}
 
-            <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} />
+            <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} position={modalPosition} />
         </div>
     );
 }

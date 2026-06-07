@@ -6,12 +6,22 @@ import { useState } from "react";
 import InboxTaskModal from "@/components/custom/EditInboxTaskModal";
 import { useParams } from "next/navigation";
 import { useDnD } from "@/app/providers/DragAndDropContext";
+import TasklistMoreActions from "./TasklistActionModal";
+import { useRef } from "react";
 
 
 export default function TaskListBoardMain() {
     const { tasklist, createTasklist } = useTasklist();
     const { createTask, inboxTasks } = useInboxTask();
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+    const [isTasklistModalOpen, setIsTasklistModalOpen] = useState<boolean>(false);
+    const [selectedListId, setSelectedListId] = useState<string | null>(null);
+    const listMenuRef = useRef<Map<string, HTMLButtonElement>>(new Map());
+    const [modalPosition, setModalPosition] = useState<{top: number; left: number }>({top: 0, left: 0});
+
+    const handleMoreActionsChange = (open: boolean) => {
+        setIsTasklistModalOpen(open);
+    }
 
     const boardid = useParams().boardid as string;
     const { dragTaskInfo, handleTaskDragStart, handleTaskDrop, handleContainerDrop, handleListDragStart } = useDnD();
@@ -51,7 +61,7 @@ export default function TaskListBoardMain() {
                 return (
                     <div
                         key={list.id}
-                        className="shrink-0 w-68 flex flex-col rounded-2xl bg-[#f5f5f3] border border-neutral-200/80 max-h-full"
+                        className="relative shrink-0 w-68 flex flex-col rounded-2xl bg-[#f5f5f3] border border-neutral-200/80 max-h-full"
                         draggable
                         onDragStart={() => {
                             if (dragTaskInfo.current) return;
@@ -78,6 +88,19 @@ export default function TaskListBoardMain() {
                             <button
                                 className="w-6 h-6 rounded-md flex items-center justify-center text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200/60 transition-colors shrink-0"
                                 aria-label="List options"
+                                ref = {(el) => {if (el) listMenuRef.current.set(list.id, el)}}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    setModalPosition({
+                                        top: rect.bottom + window.scrollY - 24,
+                                        left: rect.left + window.scrollX + 40
+                                    })
+
+                                    setIsTasklistModalOpen(true)
+                                    setSelectedListId(list.id)
+                                }}
                             >
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
@@ -100,7 +123,16 @@ export default function TaskListBoardMain() {
                                 <div
                                     key={task.id}
                                     draggable
-                                    onClick={() => setSelectedTaskId(task.id)}
+                                    onClick={(e) => {
+                                        setSelectedTaskId(task.id)
+                                        // const rect = e.currentTarget.getBoundingClientRect();
+                                        setModalPosition({
+                                            // top: rect.bottom + window.scrollY - 24,
+                                            // left: rect.left + window.scrollX + 500,
+                                            top: 200,
+                                            left: 1000
+                                        })
+                                    }}
                                     onDragStart={(e) => {
                                         e.stopPropagation();
                                         handleTaskDragStart(list.id, taskIndex, task.id);
@@ -150,21 +182,25 @@ export default function TaskListBoardMain() {
                 );
             })}
 
-            <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} />
+            <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} position={modalPosition} />
 
             {/* Add new list column */}
             <div className="shrink-0 w-68">
                 <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-100/50 hover:bg-neutral-100 hover:border-neutral-400 transition-colors">
                     <AddNewTask addNewTask={addNewTasklist}>
                         <span className="flex items-center gap-1.5 text-[13px] font-medium text-neutral-400 hover:text-neutral-600 transition-colors">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
                             {tasklist.length === 0 ? "Add a list" : "Add another list"}
                         </span>
                     </AddNewTask>
                 </div>
             </div>
+            <TasklistMoreActions 
+                isMoreActionsOpen={isTasklistModalOpen} 
+                handleMoreActionChange={handleMoreActionsChange}
+                listId = {selectedListId}
+                setIsTasklistModalOpen={setIsTasklistModalOpen}
+                position={modalPosition}
+                 />
         </div>
     );
 }

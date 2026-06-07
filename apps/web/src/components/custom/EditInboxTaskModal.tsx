@@ -15,9 +15,10 @@ import { useTasklist } from "@/app/providers/TasklistContext"
 type childProp = {
     selectedTaskId: string | null;
     setSelectedTaskId: React.Dispatch<React.SetStateAction<string | null>>;
+    position: {top: number, left: number};
 }
 
-export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId }: childProp) {
+export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId, position }: childProp) {
     const { inboxTasks, updateTask } = useInboxTask();
     const {tasklist} = useTasklist()
     const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
@@ -62,7 +63,10 @@ export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId }: ch
 
     return (
         <Dialog open={!!selectedTask} onOpenChange={handleOpenChange}>
-            <DialogContent className="p-0 gap-0 max-w-125 rounded-2xl border border-neutral-200 bg-white shadow-md overflow-hidden [&>button]:hidden">
+            <DialogContent
+                style={{top: `${position.top}px`, left: `${position.left}px`}} 
+                className="p-0 gap-0 max-w-125 rounded-2xl border border-neutral-200 bg-white shadow-md overflow-visible [&>button]:hidden"
+                >
                 <form onSubmit={handleSubmitEdit}>
 
                   <DialogTitle className="sr-only"></DialogTitle>
@@ -75,6 +79,7 @@ export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId }: ch
                                     <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
                                 </svg>
                                 {
+                                    //
                                   currentTasklist?.title
                                 }
                             </span>
@@ -92,6 +97,7 @@ export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId }: ch
                                         </svg>
                                     </button>
                                     <MoreActions
+                                    //
                                         isMoreActionsOpen={isMoreActionsOpen}
                                         handleMoreActionsChange={handleMoreActionsChange}
                                         taskId={selectedTaskId}

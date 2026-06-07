@@ -81,6 +81,7 @@ export function TasklistProvider({children}: {children: React.ReactNode}) {
         setTasklist(prev => 
             prev.filter(task => task.id !== taskId)
         )
+
     }
 
     return (

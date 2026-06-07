@@ -1,12 +1,11 @@
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverHeader,
+  PopoverTitle,
+} from "@/components/ui/popover"
+
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -27,21 +26,22 @@ type ChildProps = {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+
 export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen, handleSubmit, handleChange}: ChildProps) {
     return (
         <>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
+            <Popover open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <PopoverTrigger asChild>
               <Button className="hidden hover:cursor-pointer md:block bg-[#E07A5F] text-white hover:bg-[#c64927]">
                 Create
               </Button>
-            </DialogTrigger>
+            </PopoverTrigger>
 
-            <DialogContent className="sm:max-w-106.25 bg-[#E8F7F2]">
+            <PopoverContent className="sm:max-w-106.25 bg-[#E8F7F2] top-100 left-100">
               <form onSubmit={handleSubmit}>
-                <DialogHeader>
-                  <DialogTitle>Create Board</DialogTitle>
-                </DialogHeader>
+                <PopoverHeader>
+                  <PopoverTitle>Create Board</PopoverTitle>
+                </PopoverHeader>
                 <div className="grid gap-4">
                   <div className="grid gap-3">
                     <Label htmlFor="title">Title</Label>
@@ -104,17 +104,10 @@ export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen,
                     </FieldLabel>
                   </div>
                 </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button type="button" variant="outline">
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button type="submit">Create</Button>
-                </DialogFooter>
+                <Button type="submit">Create</Button>
               </form>
-            </DialogContent>
-          </Dialog>
+            </PopoverContent>
+          </Popover>
         
         </>
     )

@@ -27,7 +27,8 @@ export default function NavBar() {
     tag: "",
     isTemplate: false,
     isPublic: false,
-    liked: false
+    created_at: "",
+    updated_at: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,13 +55,14 @@ export default function NavBar() {
       isTemplate: boardData.isTemplate,
       isPublic: boardData.isPublic || false,
       creator: "currentUser",
-      liked: boardData.liked
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
     addBoard(newBoard);
     
     // Reset form state
-    setBoardData({ coverImage: "", title: "", tag: "", isPublic: false, isTemplate: false, liked: false});
+    setBoardData({ coverImage: "", title: "", tag: "", isPublic: false, isTemplate: false, created_at:"", updated_at: "" });
     setIsDialogOpen(false);
   }
 
@@ -87,7 +89,12 @@ export default function NavBar() {
             </div>
           </div>
           <div className='hidden lg:inline'>
-            <AddNewSection boardData={boardData} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} handleChange={handleChange} handleSubmit={handleSubmit} />
+            <AddNewSection 
+              boardData={boardData} 
+              isDialogOpen={isDialogOpen} 
+              setIsDialogOpen={setIsDialogOpen} 
+              handleChange={handleChange} 
+              handleSubmit={handleSubmit} />
           </div>
         </div>
 
@@ -139,7 +146,12 @@ export default function NavBar() {
               </li>
             ))}
             <li>
-              <AddNewSection boardData={boardData} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} handleChange={handleChange} handleSubmit={handleSubmit} />
+              <AddNewSection 
+                boardData={boardData} 
+                isDialogOpen={isDialogOpen} 
+                setIsDialogOpen={setIsDialogOpen} 
+                handleChange={handleChange} 
+                handleSubmit={handleSubmit} />
             </li>
           </ul>
         </div>

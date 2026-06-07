@@ -11,6 +11,7 @@ const inboxTaskContext = createContext<{
     reorderTasksWithinList: (TaskListId: string, sourceIndex: number, destinationIndex: number) => void;
     moveTaskToList: (taskId: string, targetListId: string) => void;
     archieveTask: (taskId: string) => void;
+    deleteTasksByTasklistId: (tasklistId: string) => void;
 } | null> (null);
 
 
@@ -95,6 +96,12 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
             );
     }
 
+    function deleteTasksByTasklistId(tasklistId: string) {
+        setInboxTasks(prev => 
+            prev.filter(task => task.taskListId !== tasklistId )
+        )
+    }
+
     function archieveTask(taskId: string) {
         setInboxTasks(prevTasks => 
             prevTasks.map(task => {
@@ -107,7 +114,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     }
 
   return (
-    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask, reorderTasksWithinList, moveTaskToList, archieveTask }}>
+    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask, reorderTasksWithinList, moveTaskToList, archieveTask, deleteTasksByTasklistId }}>
         {children}
     </inboxTaskContext.Provider>
   )
