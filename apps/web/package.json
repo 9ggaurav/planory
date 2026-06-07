@@ -22,6 +22,7 @@
     "next": "16.1.5",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
+    "react-colorful": "^5.7.0",
     "react-dom": "19.2.3",
     "react-resizable-panels": "^4.10.0",
     "tailwind-merge": "^3.4.0"

@@ -3,8 +3,8 @@ import {createContext, useContext, useState} from "react";
 import type { inboxTask as inboxTaskType } from "@repo/shared";
 import {tasks as defaultTasks} from "@/app/b/[boardid]/mockData"
 
-const inboxTaskContext = createContext<{
-    inboxTasks: inboxTaskType[];
+const TaskContext = createContext<{
+    Tasks: inboxTaskType[];
     createTask: (title: string, taskListId: string) => void;
     updateTask: (id: string, updates: Partial<inboxTaskType>) => void;
     deleteTask: (id: string) => void;
@@ -15,15 +15,14 @@ const inboxTaskContext = createContext<{
 } | null> (null);
 
 
-export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
-    const [inboxTasks, setInboxTasks] = useState<inboxTaskType[]>([...defaultTasks]);
-    console.log(inboxTasks)
+export function TaskProvider({ children }: {children: React.ReactNode}) {
+    const [Tasks, setTasks] = useState<inboxTaskType[]>([...defaultTasks]);
 
     function createTask(title: string, taskListId: string) {
     const trimmed = title.trim();
     if (!trimmed) return;
 
-    setInboxTasks(prev => {
+    setTasks(prev => {
         const nextPosition = Math.max(...prev.map(t => t.position), -1) + 1; // ✅ inside updater
         return [...prev, {
             id: crypto.randomUUID(),
@@ -38,7 +37,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     }
 
     function updateTask(id: string, updates: Partial<inboxTaskType>) {
-        setInboxTasks((prev) => 
+        setTasks((prev) => 
             prev.map((task) => 
                 task.id === id
                     ? {
@@ -55,7 +54,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
         sourceIndex: number,
         destinationIndex: number
     ) {
-        setInboxTasks(prev => {
+        setTasks(prev => {
             const listTasks = prev
                 .filter(task => task.taskListId === taskListId)
                 .sort((a, b) => a.position - b.position);
@@ -79,7 +78,7 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     }
 
     function moveTaskToList(taskId: string, targetListId: string) {
-        setInboxTasks(prev => {
+        setTasks(prev => {
             const targetListTasks = prev.filter(t => t.taskListId === targetListId)
             const nextPosition = Math.max(...targetListTasks.map(t => t.position), -1)+1;
             return prev.map(task => 
@@ -91,19 +90,19 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     }
 
     function deleteTask(taskId: string) {
-        setInboxTasks(prev =>
+        setTasks(prev =>
             prev.filter(task => task.id !== taskId)
             );
     }
 
     function deleteTasksByTasklistId(tasklistId: string) {
-        setInboxTasks(prev => 
+        setTasks(prev => 
             prev.filter(task => task.taskListId !== tasklistId )
         )
     }
 
     function archieveTask(taskId: string) {
-        setInboxTasks(prevTasks => 
+        setTasks(prevTasks => 
             prevTasks.map(task => {
                 if (task.id === taskId) {
                     return {...task, taskListId: "archieve"}
@@ -114,14 +113,14 @@ export function InboxTaskProvider({ children }: {children: React.ReactNode}) {
     }
 
   return (
-    <inboxTaskContext.Provider value={{ inboxTasks, createTask, updateTask, deleteTask, reorderTasksWithinList, moveTaskToList, archieveTask, deleteTasksByTasklistId }}>
+    <TaskContext.Provider value={{ Tasks, createTask, updateTask, deleteTask, reorderTasksWithinList, moveTaskToList, archieveTask, deleteTasksByTasklistId }}>
         {children}
-    </inboxTaskContext.Provider>
+    </TaskContext.Provider>
   )
 }
 
-export function useInboxTask(){
-    const ctx = useContext(inboxTaskContext);    
-    if (!ctx) throw new Error("useInboxTask must be used inside inboxTaskProvider");
+export function useTasks(){
+    const ctx = useContext(TaskContext);    
+    if (!ctx) throw new Error("useTasks must be used inside TaskProvider");
     return ctx;
 }

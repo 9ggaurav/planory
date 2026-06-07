@@ -1,12 +1,10 @@
 import InboxBoardNavbar from "./ProjectBoardComponents/InboxBoardNavbar";
-import InboxNewTaskCards from "@/components/sections/ProjectBoard/components/InboxNewTaskCards";
-import { useInboxTask } from "@/app/providers/inboxTaskContext";
+import InboxTaskCards from "@/components/sections/ProjectBoard/components/InboxTaskCards";
+import { useTasks } from "@/app/providers/TaskContext";
 import AddNewTask from "@/components/sections/ProjectBoard/components/addNewTask";
 
-
-
 export default function InboxBoard() {
-    const {createTask} = useInboxTask();
+    const {createTask} = useTasks();
 
     function addNewTask(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -26,7 +24,7 @@ export default function InboxBoard() {
             <main className="h-full">
                 <AddNewTask addNewTask={addNewTask}>add a card</AddNewTask>
                 <div className="h-full w-full">
-                    <InboxNewTaskCards />
+                    <InboxTaskCards />
                 </div>
             </main>
         </div>

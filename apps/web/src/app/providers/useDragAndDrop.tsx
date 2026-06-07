@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import { useInboxTask } from "@/app/providers/inboxTaskContext";
+import { useTasks } from "@/app/providers/TaskContext";
 import { useTasklist } from "@/app/providers/TasklistContext";
 
 export function useDragAndDrop() {
-    const { reorderTasksWithinList, moveTaskToList } = useInboxTask();
+    const { reorderTasksWithinList, moveTaskToList } = useTasks();
     const { reorderListsWithinBoard } = useTasklist();
 
     const dragTaskInfo = useRef<{ listId: string; index: number; taskId: string } | null>(null);

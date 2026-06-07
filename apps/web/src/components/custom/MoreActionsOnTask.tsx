@@ -1,5 +1,5 @@
 "use client"
-import { useInboxTask } from "@/app/providers/inboxTaskContext";
+import { useTasks } from "@/app/providers/TaskContext";
 import { useRef, useEffect } from "react";
 
 type childProp = {
@@ -9,7 +9,7 @@ type childProp = {
 }
 
 export default function MoreActions({ isMoreActionsOpen, handleMoreActionsChange, taskId }: childProp) {
-    const { deleteTask, archieveTask } = useInboxTask();
+    const { deleteTask, archieveTask } = useTasks();
     const ref = useRef<HTMLDivElement>(null);
 
     const handleArchieve = (id: string | null) => {

@@ -26,8 +26,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <BoardProvider>
-          <NavBar />
-          {children}
+          <div className="bg-neutral-50">
+            <NavBar />
+            {children}
+          </div>
         </BoardProvider>
         
       </body>

@@ -1,4 +1,4 @@
-import WorspaceCard from "@/components/custom/WorkspaceCard";
+import DisplayBoardCard from "@/components/custom/DisplayBoardCard";
 import type {userBoard as userBoardType} from "@repo/shared";
 import { UsersRound } from "lucide-react";
 
@@ -16,7 +16,7 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
                 <div className="mt-4 grid grid-cols-1 gap-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     {publicBoards.map((board, index) => (
                         board.isPublic &&
-                        <WorspaceCard
+                        <DisplayBoardCard
                             id={board.id}
                             key={index}
                             coverImage={board.coverImage}
@@ -24,7 +24,6 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
                             tag={board.tag}
                             isTemplate={board.isTemplate}
                             creator={board.creator}
-                            liked={board.liked}
                         />
                     ))}
                 </div>

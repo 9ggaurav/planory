@@ -125,7 +125,8 @@
 }
 
 body {
-  background-color: #2D5C4F;
+  /* background-color: #2D5C4F; */
+  /* background-color: white; */
 }
 
 @layer utilities {

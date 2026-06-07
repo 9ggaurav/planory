@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { useInboxTask } from "@/app/providers/inboxTaskContext"
+import { useTasks } from "@/app/providers/TaskContext"
 import { useState } from "react"
 import MoreActions from "./MoreActionsOnTask"
 import { useTasklist } from "@/app/providers/TasklistContext"
@@ -18,8 +18,8 @@ type childProp = {
     position: {top: number, left: number};
 }
 
-export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId, position }: childProp) {
-    const { inboxTasks, updateTask } = useInboxTask();
+export default function DisplayTaskModal({ selectedTaskId, setSelectedTaskId, position }: childProp) {
+    const { Tasks, updateTask } = useTasks();
     const {tasklist} = useTasklist()
     const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
     const [isMoreActionsOpen, setIsMoreActionsOpen] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export default function InboxTaskModal({ selectedTaskId, setSelectedTaskId, posi
         setIsMoreActionsOpen(open);
     }
 
-    const selectedTask: inboxTaskType | undefined = inboxTasks.find(
+    const selectedTask: inboxTaskType | undefined = Tasks.find(
         task => task.id === selectedTaskId
     )
     const currentTasklist: tasklistType|undefined = tasklist.find(list => list.id === selectedTask?.taskListId);

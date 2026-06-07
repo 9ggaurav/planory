@@ -1,9 +1,9 @@
 "use client"
-import { useInboxTask } from "@/app/providers/inboxTaskContext";
+import { useTasks } from "@/app/providers/TaskContext";
 import { useTasklist } from "@/app/providers/TasklistContext"
 import AddNewTask from "@/components/sections/ProjectBoard/components/addNewTask";
 import { useState } from "react";
-import InboxTaskModal from "@/components/custom/EditInboxTaskModal";
+import DisplayTaskModal from "@/components/custom/DisplayTaskModal";
 import { useParams } from "next/navigation";
 import { useDnD } from "@/app/providers/DragAndDropContext";
 import TasklistMoreActions from "./TasklistActionModal";
@@ -12,7 +12,7 @@ import { useRef } from "react";
 
 export default function TaskListBoardMain() {
     const { tasklist, createTasklist } = useTasklist();
-    const { createTask, inboxTasks } = useInboxTask();
+    const { createTask, Tasks } = useTasks();
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
     const [isTasklistModalOpen, setIsTasklistModalOpen] = useState<boolean>(false);
     const [selectedListId, setSelectedListId] = useState<string | null>(null);
@@ -52,7 +52,7 @@ export default function TaskListBoardMain() {
         <div className="flex justify-start gap-3 h-full px-4 py-4 overflow-x-auto">
 
             {filteredLists.map((list, listIndex) => {
-                const listTasks = inboxTasks
+                const listTasks = Tasks
                     .filter(task => task.taskListId === list.id)
                     .sort((a, b) => a.position - b.position);
 
@@ -91,7 +91,6 @@ export default function TaskListBoardMain() {
                                 ref = {(el) => {if (el) listMenuRef.current.set(list.id, el)}}
                                 onClick={(e) => {
                                     e.stopPropagation()
-
                                     const rect = e.currentTarget.getBoundingClientRect();
                                     setModalPosition({
                                         top: rect.bottom + window.scrollY - 24,
@@ -123,7 +122,7 @@ export default function TaskListBoardMain() {
                                 <div
                                     key={task.id}
                                     draggable
-                                    onClick={(e) => {
+                                    onClick={() => {
                                         setSelectedTaskId(task.id)
                                         // const rect = e.currentTarget.getBoundingClientRect();
                                         setModalPosition({
@@ -182,7 +181,7 @@ export default function TaskListBoardMain() {
                 );
             })}
 
-            <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} position={modalPosition} />
+            <DisplayTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} position={modalPosition} />
 
             {/* Add new list column */}
             <div className="shrink-0 w-68">

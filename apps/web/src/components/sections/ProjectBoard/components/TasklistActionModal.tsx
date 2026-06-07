@@ -1,5 +1,5 @@
 "use client"
-import { useInboxTask } from "@/app/providers/inboxTaskContext";
+import { useTasks } from "@/app/providers/TaskContext";
 import { useTasklist } from "@/app/providers/TasklistContext";
 import { useRef, useEffect } from "react";
 
@@ -12,7 +12,7 @@ type childProp = {
 }
 
 export default function TasklistMoreActions({ isMoreActionsOpen, handleMoreActionChange, listId, setIsTasklistModalOpen, position }: childProp) {
-    const {deleteTasksByTasklistId} = useInboxTask();
+    const {deleteTasksByTasklistId} = useTasks();
     const {deleteTasklist} = useTasklist()
     const ref = useRef<HTMLDivElement>(null);
 

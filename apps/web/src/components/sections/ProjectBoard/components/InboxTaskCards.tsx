@@ -1,16 +1,16 @@
 "use client"
 import { useState } from "react"
-import { useInboxTask } from "@/app/providers/inboxTaskContext"
-import InboxTaskModal from "@/components/custom/EditInboxTaskModal"
+import { useTasks } from "@/app/providers/TaskContext"
+import DisplayTaskModal from "@/components/custom/DisplayTaskModal"
 import { useDnD } from "@/app/providers/DragAndDropContext"
 
-export default function InboxNewTaskCards() {
+export default function InboxTaskCards() {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
     const [modalPosition, setModalPosition] = useState<{top: number; left: number}>({top: 0, left: 0});
-    const { inboxTasks } = useInboxTask();
+    const { Tasks } = useTasks();
     const { handleTaskDragStart, handleTaskDrop } = useDnD();
 
-    const InboxOnlyTasks = inboxTasks.filter(
+    const InboxOnlyTasks = Tasks.filter(
         task => task.taskListId === "inbox"
     ).sort(
         (a, b) => a.position - b.position
@@ -64,7 +64,7 @@ export default function InboxNewTaskCards() {
                 </div>
             ))}
 
-            <InboxTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} position={modalPosition} />
+            <DisplayTaskModal selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId} position={modalPosition} />
         </div>
     );
 }

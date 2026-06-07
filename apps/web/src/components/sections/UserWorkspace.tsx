@@ -1,4 +1,4 @@
-import WorkspaceCard from "@/components/custom/WorkspaceCard";
+import DisplayBoardCard from "@/components/custom/DisplayBoardCard";
 // import NewBoardCard from "@/components/custom/newBoardCard";
 import type { userBoard as UserBoardType } from "@repo/shared";
 import { BriefcaseBusiness } from "lucide-react";
@@ -20,7 +20,7 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
                 <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     {
                         userBoards.map((board, index) => (
-                            <WorkspaceCard
+                            <DisplayBoardCard
                                 id={board.id}
                                 key={index}
                                 coverImage={board.coverImage}
@@ -28,7 +28,8 @@ export default function UserWorkspace({userBoards}: {userBoards: UserBoardType[]
                                 tag={board.tag}
                                 isTemplate={board.isTemplate}
                                 creator={board.creator}
-                                liked={board.liked}
+                                // created_at={board.created_at}
+                                // updated_at={board.updated_at}
                             />
                         ))
                     }

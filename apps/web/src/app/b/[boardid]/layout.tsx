@@ -1,5 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { InboxTaskProvider } from "@/app/providers/inboxTaskContext";
+import { TaskProvider } from "@/app/providers/TaskContext";
 import { TasklistProvider } from "@/app/providers/TasklistContext";
 import { DragAndDropProvider } from "@/app/providers/DragAndDropContext";
 
@@ -10,13 +10,13 @@ export default function RootLayout({
 }>) {
   return (
         <TooltipProvider>
-            <InboxTaskProvider>
+            <TaskProvider>
               <TasklistProvider>
                 <DragAndDropProvider>
                   {children}
                 </DragAndDropProvider>
               </TasklistProvider>
-            </InboxTaskProvider>
+            </TaskProvider>
         </TooltipProvider>
   );
 }

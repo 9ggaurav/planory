@@ -32,7 +32,7 @@ export default function AddNewSection({boardData, isDialogOpen, setIsDialogOpen,
         <>
             <Popover open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <PopoverTrigger asChild>
-              <Button className="hidden hover:cursor-pointer md:block bg-[#E07A5F] text-white hover:bg-[#c64927]">
+              <Button className="hidden hover:cursor-pointer md:block bg-emerald-700 text-white hover:bg-emerald-600">
                 Create
               </Button>
             </PopoverTrigger>
