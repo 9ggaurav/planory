@@ -1,9 +1,9 @@
 "use client";
 
 import Container from "@/components/custom/Container";
-import PublicBoards from "@/components/sections/HomePublic";
-import UserWorkspace from "@/components/sections/UserWorkspace";
-import { useBoards} from "@/app/providers/BoardContext";
+import PublicBoards from "@/features/board/components/HomePublic";
+import UserWorkspace from "@/features/board/components/UserWorkspace";
+import { useBoards} from "@/providers/BoardContext";
 
 
 export default function Home() {

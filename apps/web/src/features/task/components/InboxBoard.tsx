@@ -1,4 +1,4 @@
-import InboxBoardNavbar from "../../../components/sections/ProjectBoard/ProjectBoardComponents/InboxBoardNavbar";
+import InboxBoardNavbar from "@/components/navbar/InboxBoardNavbar";
 import InboxTaskCards from "@/features/task/components/InboxTaskCards";
 import { useTasks } from "@/providers/TaskContext";
 import AddNewTask from "@/features/task/components/addNewTask";

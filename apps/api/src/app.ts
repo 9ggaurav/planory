@@ -4,7 +4,7 @@ import type {Request, Response, Express} from 'express';
 const app: Express = express();
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, World!');
+  res.send({"message": "Hello, World!"});
 });
 
 export default app;

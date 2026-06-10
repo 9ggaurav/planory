@@ -1,7 +1,7 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { TaskProvider } from "@/app/providers/TaskContext";
-import { TasklistProvider } from "@/app/providers/TasklistContext";
-import { DragAndDropProvider } from "@/app/providers/DragAndDropContext";
+import { TaskProvider } from "@/providers/TaskContext";
+import { TasklistProvider } from "@/providers/TasklistContext";
+import { DragAndDropProvider } from "@/providers/DragAndDropContext";
 
 export default function RootLayout({
   children,

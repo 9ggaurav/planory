@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { useTasks } from "@/app/providers/TaskContext";
-import { useTasklist } from "@/app/providers/TasklistContext";
+import { useTasks } from "@/providers/TaskContext";
+import { useTasklist } from "@/providers/TasklistContext";
 
 export function useDragAndDrop() {
     const { reorderTasksWithinList, moveTaskToList } = useTasks();

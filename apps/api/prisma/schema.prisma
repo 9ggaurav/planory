@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             Int     @id @default(autoincrement())
+  email          String  @unique
+  name           String?
+  hashedPassword String?
+  refreshToken String?
+
+  boardsCreated Board[] @relation("BoardCreator")
+  boardsJoined Board[] @relation("BoardMembers")
+}
+
+model Board {
+  id         Int     @id @default(autoincrement())
+  coverImage String?
+  title      String
+  tag        String[]
+  isPublic     Boolean @default(false)
+  isTemplate Boolean @default(false)
+
+  creator    User    @relation("BoardCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId  Int
+  @@index([creatorId])
+
+  members User[] @relation("BoardMembers")
+
+  taskLists TaskList[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TaskList {
+  id Int @id @default(autoincrement())
+  title String
+  position Float
+  description String?
+  isArchived Boolean @default(false)
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId Int
+  @@index([boardId])
+
+  tasks Task[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id Int @id @default(autoincrement())
+  title String
+  description String?
+  position Float
+  isDone Boolean @default(false)
+
+  taskList TaskList @relation(fields: [taskListId], references: [id], onDelete: Cascade)
+  taskListId Int
+  @@index([taskListId])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

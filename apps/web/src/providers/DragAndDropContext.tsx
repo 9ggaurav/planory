@@ -1,6 +1,6 @@
 "use client"
 import {createContext, useContext} from "react";
-import { useDragAndDrop } from "@/app/providers/useDragAndDrop";
+import { useDragAndDrop } from "@/providers/useDragAndDrop";
 
 type DragAndDropContextType = ReturnType<typeof useDragAndDrop>;
 

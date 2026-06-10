@@ -1,9 +1,7 @@
 "use client";
 import {Group, Panel, Separator } from "react-resizable-panels";
-import InboxBoard from "@/components/sections/ProjectBoard/InboxBoard";
-import TasklistBoard from "@/components/sections/ProjectBoard/TasklistBoard";
-
-// import { useInboxTask } from "@/app/providers/inboxTaskContext";
+import InboxBoard from "@/features/task/components/InboxBoard";
+import TasklistBoard from "@/features/tasklist/components/TasklistBoard";
 
 
 export default function Board() {

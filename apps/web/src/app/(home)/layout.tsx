@@ -1,4 +1,4 @@
-import HomeSidebar from "@/components/custom/HomeSidebar";
+import HomeSidebar from "@/components/navbar/HomeSidebar";
 
 export default  function RootLayout({
   children,
