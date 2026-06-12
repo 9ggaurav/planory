@@ -8,4 +8,5 @@ export type userBoard = {
     creator?: string;
     created_at: string,
     updated_at: string,
+    // creatorId: string,
 };
