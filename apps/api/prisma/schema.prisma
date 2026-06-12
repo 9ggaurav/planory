@@ -17,59 +17,62 @@ model User {
   email          String  @unique
   name           String?
   hashedPassword String?
-  refreshToken String?
+  refreshToken   String?
 
   boardsCreated Board[] @relation("BoardCreator")
-  boardsJoined Board[] @relation("BoardMembers")
+  boardsJoined  Board[] @relation("BoardMembers")
 }
 
 model Board {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   coverImage String?
   title      String
   tag        String[]
-  isPublic     Boolean @default(false)
-  isTemplate Boolean @default(false)
+  isPublic   Boolean  @default(false)
+  isTemplate Boolean  @default(false)
 
-  creator    User    @relation("BoardCreator", fields: [creatorId], references: [id], onDelete: Cascade)
-  creatorId  Int
-  @@index([creatorId])
+  creator   User @relation("BoardCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId Int
 
   members User[] @relation("BoardMembers")
 
   taskLists TaskList[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([creatorId])
 }
 
 model TaskList {
-  id Int @id @default(autoincrement())
-  title String
-  position Float
+  id          Int     @id @default(autoincrement())
+  title       String
+  position    Float
   description String?
-  isArchived Boolean @default(false)
+  isArchived  Boolean @default(false)
 
-  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId Int
-  @@index([boardId])
 
   tasks Task[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([boardId])
 }
 
 model Task {
-  id Int @id @default(autoincrement())
-  title String
+  id          Int     @id @default(autoincrement())
+  title       String
   description String?
-  position Float
-  isDone Boolean @default(false)
+  position    Float
+  isDone      Boolean @default(false)
 
-  taskList TaskList @relation(fields: [taskListId], references: [id], onDelete: Cascade)
+  taskList   TaskList @relation(fields: [taskListId], references: [id], onDelete: Cascade)
   taskListId Int
-  @@index([taskListId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([taskListId])
 }
