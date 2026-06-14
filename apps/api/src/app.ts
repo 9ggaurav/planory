@@ -15,13 +15,17 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+// routes import
+import userRouter from "./routes/user.routes";
+
+
+// routes declaration
+app.use("/api/v1/users", userRouter);
+
 
 app.get('/', (req: Request, res: Response) => {
   res.send({"message": "Hello, World!"});
 });
 
-app.get('/home', (req: Request, res: Response) => {
-  res.send({"message": "Welcome to Home Page"})
-})
 
 export default app;
