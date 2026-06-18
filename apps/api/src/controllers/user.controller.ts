@@ -5,17 +5,9 @@ import {prisma} from "../lib/prisma";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import bcrypt from "bcrypt";
 import { ApiResponse } from "../utils/ApiResponse";
+import fs from "fs";
 
 const registerUser: RequestHandler = asyncHandler( async (req, res) => {
-    // get user details from frontend
-    // validation
-    // check if user already exist
-    // check for images (avatar) and other information
-    // upload them to cloudinary, avatar
-    // create user object - create entry in db
-    // remove password and refresh token field from response
-    // check for user creation
-    // return response
 
     const {email, name, avatar, password} = req.body;
 
@@ -46,6 +38,15 @@ const registerUser: RequestHandler = asyncHandler( async (req, res) => {
     }
 
     let avatarLink = await uploadOnCloudinary(avatarLocalPath)
+
+    if (!avatarLink) {
+        throw new ApiError(500, "Avatar upload failed on cloudinary");
+    }
+
+    await fs.unlink(avatarLocalPath, (err) => {
+        if (err) throw new ApiError(500, err.message)
+        console.log("file deleted from server")
+    });
 
     const user = await prisma.user.create({
         data: {
