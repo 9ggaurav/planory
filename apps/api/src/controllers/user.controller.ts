@@ -114,7 +114,7 @@ const registerUser: RequestHandler = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully!"));
 });
 
-const getUsers: RequestHandler = asyncHandler(async (req, res) => {
+const getUsers: RequestHandler = asyncHandler(async (_, res) => {
   const users = await prisma.user.findMany({
     select: {
       id: true,
@@ -187,4 +187,26 @@ const loginUser: RequestHandler = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, getUsers, loginUser };
+const logoutUser: RequestHandler = asyncHandler(async (req, res) => {
+  await prisma.user.update({
+    where: {
+      id: req.user!.id,
+    },
+    data: {
+      refreshToken: null,
+    }
+  })
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  }
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out successfully!"))
+})
+
+export { registerUser, getUsers, loginUser, logoutUser };
