@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { ApiResponse } from "../utils/ApiResponse";
 import fs from "fs";
 import { generateAccessToken, generateRefreshToken } from "../utils/authTokens";
+import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshTokens = async (userId: number) => {
   try {
@@ -28,6 +29,9 @@ const generateAccessAndRefreshTokens = async (userId: number) => {
       user?.id as number,
       user?.email as string,
     );
+
+    // const decodedRefreshToken = await bcrypt.hash(refreshToken, 12);
+
     user &&
       (await prisma.user.update({
         where: {
@@ -114,20 +118,25 @@ const registerUser: RequestHandler = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully!"));
 });
 
-const getUsers: RequestHandler = asyncHandler(async (_, res) => {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      avatar: true,
-    },
-  });
+const getUsers: RequestHandler = asyncHandler(async (req, res) => {
+  console.log("Fetching all users started");
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+      },
+    });
 
-  return res.status(201).json(new ApiResponse(200, users, "get all users"));
+    return res.status(201).json(new ApiResponse(200, users, "get all users"));
+  } catch (error) {
+    throw new ApiError(500, "Failed to fetch users");
+  }
 });
 
 const loginUser: RequestHandler = asyncHandler(async (req, res) => {
-
   const { email, password } = req.body;
 
   if (!email) {
@@ -144,9 +153,10 @@ const loginUser: RequestHandler = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User does not exist");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 12);
-  if (hashedPassword !== user.hashedPassword) {
-    throw new ApiError(401, "Invalid user credentials");
+  const isPasswordValid = await bcrypt.compare(password, user.hashedPassword!);
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid password");
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
@@ -194,19 +204,75 @@ const logoutUser: RequestHandler = asyncHandler(async (req, res) => {
     },
     data: {
       refreshToken: null,
-    }
-  })
+    },
+  });
 
   const options = {
     httpOnly: true,
     secure: true,
-  }
+  };
 
   return res
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged out successfully!"))
-})
+    .json(new ApiResponse(200, {}, "User logged out successfully!"));
+});
 
-export { registerUser, getUsers, loginUser, logoutUser };
+const refreshAccessToken: RequestHandler = asyncHandler(async (req, res) => {
+  const incomingRefrehToken =
+    req.cookies?.refreshToken || req.body?.refreshToken;
+  if (!incomingRefrehToken) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(
+      incomingRefrehToken,
+      process.env.JWT_REFRESH_SECRET as string,
+    ) as { id: number; email: string };
+  } catch (error) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: decodedToken.id,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (user.refreshToken !== incomingRefrehToken) {
+    throw new ApiError(
+      401,
+      "Refresh token does not match possibly user logged out or token is invalid",
+    );
+  }
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user.id,
+  );
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        { accessToken, refreshToken },
+        "Access token refreshed successfully!",
+      ),
+    );
+});
+
+export { registerUser, getUsers, loginUser, logoutUser, refreshAccessToken };

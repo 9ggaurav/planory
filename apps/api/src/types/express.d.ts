@@ -8,7 +8,6 @@ declare global {
                 email: string;
                 name: string | null;
                 avatar: string | null;
-                role: Role;
             };
         }
     }
