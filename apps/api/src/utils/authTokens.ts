@@ -8,7 +8,7 @@ export function generateAccessToken(userId: number, email: string) {
     },
     process.env.JWT_ACCESS_SECRET as string,
     {
-      expiresIn: "1m",
+      expiresIn: "5m",
     },
   );
 }
@@ -21,7 +21,7 @@ export function generateRefreshToken(userId: number, email: string) {
     },
     process.env.JWT_REFRESH_SECRET as string,
     {
-      expiresIn: "3m",
+      expiresIn: "10m",
     },
   );
 }

@@ -220,59 +220,197 @@ const logoutUser: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken: RequestHandler = asyncHandler(async (req, res) => {
-  const incomingRefrehToken =
-    req.cookies?.refreshToken || req.body?.refreshToken;
-  if (!incomingRefrehToken) {
-    throw new ApiError(401, "Unauthorized request");
-  }
-
-  let decodedToken;
   try {
-    decodedToken = jwt.verify(
-      incomingRefrehToken,
-      process.env.JWT_REFRESH_SECRET as string,
-    ) as { id: number; email: string };
+    const incomingRefrehToken =
+      req.cookies?.refreshToken || req.body?.refreshToken;
+    if (!incomingRefrehToken) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(
+        incomingRefrehToken,
+        process.env.JWT_REFRESH_SECRET as string,
+      ) as { id: number; email: string };
+    } catch (error) {
+      throw new ApiError(401, "Invalid refresh token");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decodedToken.id,
+      },
+    });
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (user.refreshToken !== incomingRefrehToken) {
+      throw new ApiError(
+        401,
+        "Refresh token does not match possibly user logged out or token is invalid",
+      );
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+      user.id,
+    );
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken },
+          "Access token refreshed successfully!",
+        ),
+      );
   } catch (error) {
-    throw new ApiError(401, "Invalid refresh token");
+    throw new ApiError(500, "Failed to refresh access token");
+  }
+});
+
+const changeCurrentPassword: RequestHandler = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return new ApiError(400, "Password can't be empty");
   }
 
   const user = await prisma.user.findUnique({
     where: {
-      id: decodedToken.id,
+      id: req.user!.id as number,
     },
   });
 
-  if (!user) {
-    throw new ApiError(404, "User not found");
+  if (!user?.hashedPassword) {
+    throw new ApiError(400, "User does not have a password set");
   }
 
-  if (user.refreshToken !== incomingRefrehToken) {
-    throw new ApiError(
-      401,
-      "Refresh token does not match possibly user logged out or token is invalid",
-    );
-  }
-
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
-  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
-    user.id,
+  const isPasswordValid = await bcrypt.compare(
+    oldPassword,
+    user.hashedPassword,
   );
+
+  if (!isPasswordValid) {
+    throw new ApiError(400, "Password does not match");
+  }
+
+  const isPasswordSame = await bcrypt.compare(newPassword, user.hashedPassword);
+
+  if (isPasswordSame) {
+    throw new ApiError(400, "New password can't be same as old password");
+  }
+
+  const newHashedPassword = await bcrypt.hash(newPassword, 12);
+
+  await prisma.user.update({
+    where: {
+      id: user.id as number,
+    },
+    data: {
+      hashedPassword: newHashedPassword,
+      refreshToken: null,
+    },
+  });
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(
-      new ApiResponse(
-        200,
-        { accessToken, refreshToken },
-        "Access token refreshed successfully!",
-      ),
-    );
+    .json(new ApiResponse(200, "Password reset successfully!"));
 });
 
-export { registerUser, getUsers, loginUser, logoutUser, refreshAccessToken };
+const getCurrentUser: RequestHandler = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "current user fetched successfully"));
+});
+
+const updateAccountDetails: RequestHandler = asyncHandler(async (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name && !email) {
+    throw new ApiError(
+      400,
+      "At least one field (name or email) must be provided for update",
+    );
+  }
+
+  const user = await prisma.user.update({
+    where: {
+      id: req.user!.id as number,
+    },
+    data: {
+      name: name || undefined,
+      email: email,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      avatar: true,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User details updated successfully"));
+});
+
+const updateUserAvatar: RequestHandler = asyncHandler(async (req, res) => {
+  const avatarLocalPath = req.file?.path;
+
+  if (!avatarLocalPath) {
+    throw new ApiError(400, "Avatar file is required");
+  }
+
+  const avatarLink = await uploadOnCloudinary(avatarLocalPath);
+
+  if (!avatarLink?.url) {
+    throw new ApiError(500, "Avatar upload failed on cloudinary");
+  }
+
+  await fs.unlink(avatarLocalPath, (err) => {
+    if (err) throw new ApiError(500, err.message);
+    console.log("file deleted from server");
+  });
+
+  const user = await prisma.user.update({
+    where: {
+      id: req.user!.id as number,
+    },
+    data: {
+      avatar: avatarLink.url,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      avatar: true,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar updated successfully"));
+});
+
+export {
+  registerUser,
+  getUsers,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changeCurrentPassword,
+  getCurrentUser,
+  updateAccountDetails,
+  updateUserAvatar,
+};
