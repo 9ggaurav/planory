@@ -11,8 +11,10 @@ export const verifyJWT: RequestHandler = asyncHandler(
 
       const token =
         req.cookies?.accessToken ||
-        req.header("Authorization")?.replace("Bearer ", "");
+        req.header("authorization")?.replace("Bearer ", "").trim();
 
+      console.log("Request cookies:", req.cookies); // Log the cookies for debugging
+      console.log("Request headers:", req.headers); // Log the headers for debugging
       console.log("Token from cookies or header:", token); // Log the token for debugging
 
       if (!token) {
