@@ -63,4 +63,78 @@ const createTaskList: RequestHandler = asyncHandler(async (req, res) => {
     );
 });
 
-export { createTaskList };
+const editTaskList: RequestHandler = asyncHandler(async (req, res) => {
+  const tasklistId = Number(req.params.tasklistId);
+  if (Number.isNaN(tasklistId)) {
+    throw new ApiError(400, "Invalid tasklist id");
+  }
+
+  const { title, description, isArchived } = req.body;
+  if (!title && !description && isArchived === undefined) {
+    throw new ApiError(400, "At least one field must be provided for update");
+  }
+
+  const updatedTaskList = await prisma.taskList.update({
+    where: {
+      id: tasklistId,
+    },
+    data: {
+      title: title?.trim(),
+      description: description?.trim(),
+      isArchived: isArchived,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedTaskList,
+        "taskList has been updated successfully!",
+      ),
+    );
+});
+
+const reorderTasklists: RequestHandler = asyncHandler(async (req, res) => {
+  const { boardId, tasklistId } = req.params;
+  if (Number.isNaN(Number(boardId)) || Number.isNaN(Number(tasklistId))) {
+    throw new ApiError(400, "Invalid board id or tasklist id");
+  }
+
+  const { position } = req.body;
+  if (position === undefined || typeof position !== "number") {
+    throw new ApiError(400, "Position must be provided and must be a number");
+  }
+
+  const tasklist = await prisma.taskList.findUnique({
+    where: {
+      id: Number(tasklistId),
+    },
+  });
+
+  if (!tasklist) {
+    throw new ApiError(404, "Tasklist not found");
+  }
+
+  const updatedTaskList = await prisma.taskList.update({
+    where: {
+      id: Number(tasklistId),
+    },
+    data: {
+      position,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedTaskList,
+        "taskList has been reordered successfully!",
+      ),
+    );
+});
+
+export { createTaskList, editTaskList, reorderTasklists };
