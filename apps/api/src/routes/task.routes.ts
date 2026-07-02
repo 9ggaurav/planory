@@ -8,8 +8,8 @@ import { Router } from "express";
 
 const router: Router = Router();
 
-router.route("/:taskId").put(verifyJWT, editTask);
-router.route("/:taskId/move").put(verifyJWT, moveTasks);
+router.route("/:taskId").patch(verifyJWT, editTask);
+router.route("/:taskId/move").patch(verifyJWT, moveTasks);
 router.route("/:taskId").delete(verifyJWT, deleteTaskById);
 
 export default router;

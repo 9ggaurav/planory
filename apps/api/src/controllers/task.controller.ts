@@ -102,19 +102,17 @@ const moveTasks: RequestHandler = asyncHandler(async (req, res) => {
 
 
 const deleteTaskById: RequestHandler = asyncHandler(async (req, res) => {
-  const taskListId = Number(req.params.tasklistId);
   const taskId = Number(req.params.taskId);
-  if (Number.isNaN(taskListId) || Number.isNaN(taskId)) {
-    throw new ApiError(400, "Invalid task list id or task id");
+  if (Number.isNaN(taskId)) {
+    throw new ApiError(400, "Invalid task id");
   }
   const task = await prisma.task.findFirst({
     where: {
       id: taskId,
-      taskListId: taskListId,
     },
   });
   if (!task) {
-    return new ApiError(400, "Task list or task not found");
+    return new ApiError(400, "Task not found");
   }
 
   const deletedTask = await prisma.task.delete({

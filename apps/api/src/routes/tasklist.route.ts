@@ -13,8 +13,8 @@ const router: Router = Router();
 
 router.route("/:tasklistId").get(verifyJWT, getTaskListById);
 router.route("/:tasklistId").patch(verifyJWT, editTaskList);
-router.route("/:tasklistId/move").patch(verifyJWT, moveTaskList);
-router.route("/:tasklistId").delete(verifyJWT, deleteTasklistById);
+router.route("/:tasklistId/move").patch(moveTaskList);
+router.route("/:tasklistId").delete(verifyJWT,deleteTasklistById);
 
 // task routes
 router.route("/:tasklistId/tasks").post(verifyJWT, createTask);

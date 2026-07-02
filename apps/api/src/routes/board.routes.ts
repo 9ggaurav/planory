@@ -16,16 +16,17 @@ import { upload } from "../middleware/multer.middleware";
 
 const router: Router = Router();
 
-router.route("/boards").get(verifyJWT, getAllBoardsForLoggedInUser);  // return all boards for logged in user only
-router.route("/create").post(verifyJWT, createBoard);
-router.route("/all-boards").get(getAllPublicBoards);
+router.route("/user-boards").get(verifyJWT, getAllBoardsForLoggedInUser); // return all boards for logged in user only
+router.route("/boards").post(verifyJWT, createBoard);
+router.route("/boards").get(getAllPublicBoards);
 router.route("/:boardId").get(getBoardById);
-router.route("/user-boards").get(verifyJWT, userBoards);
-router.route("/:boardId/update").put(verifyJWT, updateBoardDetails);
+router.route("/:boardId").patch(verifyJWT, updateBoardDetails);
+
 router
-  .route("/:boardId/update-coverImage")
-  .put(verifyJWT, upload.single("coverImage"), updateBoardCoverImage);
-router.route("/:boardId/delete").delete(verifyJWT, deleteBoardById);
+  .route("/:boardId/coverImage")
+  .patch(verifyJWT, upload.single("coverImage"), updateBoardCoverImage);
+
+router.route("/:boardId").delete(verifyJWT, deleteBoardById);
 
 // Tasklist routes
 router.route("/:boardId/tasklists").get(verifyJWT, getAllTasklists);

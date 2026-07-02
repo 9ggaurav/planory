@@ -6,6 +6,8 @@ import { uploadOnCloudinary } from "../utils/cloudinary";
 import { ApiResponse } from "../utils/ApiResponse";
 import fs from "fs";
 
+
+// get boards for logged in user only
 const getAllBoardsForLoggedInUser: RequestHandler = asyncHandler(async (req, res) => {    // return all boards for logged in user only
   const userId = req.user?.id as number;
   console.log("userId", userId);
@@ -102,6 +104,7 @@ const getBoardById: RequestHandler = asyncHandler(async (req, res) => {
   }
 });
 
+// ?
 const userBoards: RequestHandler = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   if (!userId) {

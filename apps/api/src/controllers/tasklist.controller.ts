@@ -58,6 +58,7 @@ const editTaskList: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const moveTaskList: RequestHandler = asyncHandler(async (req, res) => {
+  console.log("is this running?")
   const taskListId = Number(req.params.tasklistId);
 
   if (Number.isNaN(taskListId)) {
@@ -126,23 +127,17 @@ const moveTaskList: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const deleteTasklistById: RequestHandler = asyncHandler(async (req, res) => {
-  const boardId = Number(req.params.boardId);
   const tasklistId = Number(req.params.tasklistId);
-  if (Number.isNaN(boardId) || Number.isNaN(tasklistId)) {
-    throw new ApiError(400, "Invalid board id or tasklist id");
+  if (Number.isNaN(tasklistId)) {
+    throw new ApiError(400, "Invalid tasklist id");
   }
-  const board = await prisma.board.findUnique({
-    where: {
-      id: boardId,
-    },
-  });
   const tasklist = await prisma.taskList.findUnique({
     where: {
       id: tasklistId,
     },
   });
-  if (!board || !tasklist) {
-    return new ApiError(400, "Board or tasklist not found");
+  if (!tasklist) {
+    return new ApiError(400, "Tasklist not found");
   }
 
   const deletedTasklist = await prisma.taskList.delete({
@@ -161,7 +156,7 @@ const deleteTasklistById: RequestHandler = asyncHandler(async (req, res) => {
 // task controllers
 
 const createTask: RequestHandler = asyncHandler(async (req, res) => {
-  const taskListId = Number(req.params.taskListId);
+  const taskListId = Number(req.params.tasklistId);
   if (Number.isNaN(taskListId)) {
     throw new ApiError(400, "Invalid task list id");
   }
