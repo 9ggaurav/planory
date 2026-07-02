@@ -29,7 +29,6 @@ app.use("/api/v1/boards", boardRouter);
 app.use("/api/v1/tasklists", taskListRouter);
 app.use("/api/v1/tasks", taskRouter);
 
-
 app.get("/", (req: Request, res: Response) => {
   res.send({ message: "Hello, World!" });
 });

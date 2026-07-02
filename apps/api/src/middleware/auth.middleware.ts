@@ -13,15 +13,15 @@ export const verifyJWT: RequestHandler = asyncHandler(
         req.cookies?.accessToken ||
         req.header("authorization")?.replace("Bearer ", "").trim();
 
-      console.log("Request cookies:", req.cookies); // Log the cookies for debugging
-      console.log("Request headers:", req.headers); // Log the headers for debugging
-      console.log("Token from cookies or header:", token); // Log the token for debugging
+      // console.log("Request cookies:", req.cookies); // Log the cookies for debugging
+      // console.log("Request headers:", req.headers); // Log the headers for debugging
+      // console.log("Token from cookies or header:", token); // Log the token for debugging
 
       if (!token) {
         throw new ApiError(401, "Unauthorized request: No token provided");
       }
 
-      console.log("Token:", token); // Log the token for debugging
+      // console.log("Token:", token); // Log the token for debugging
 
       const decodedToken = jwt.verify(
         token,

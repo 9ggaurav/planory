@@ -6,8 +6,10 @@ import {
   logoutUser,
   refreshAccessToken,
   changeCurrentPassword,
+  updateAccountDetails,
+  updateUserAvatar,
   getCurrentUser,
-  getAllBoards,
+  getUserBoards
 } from "../controllers/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
@@ -27,8 +29,10 @@ router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/reset-password").post(verifyJWT, changeCurrentPassword);
 router.route("/me").get(verifyJWT, getCurrentUser);
+router.route("/users").patch(verifyJWT, updateAccountDetails);
+router.route("/avatar").put(verifyJWT, upload.single("avatar"), updateUserAvatar);
 
 // board routes
-router.route("/:userId/boards").get(verifyJWT, getAllBoards);
+router.route("/:userId/boards").get(verifyJWT, getUserBoards);  // return all boards for logged in user only
 
 export default router;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getAllBoardsForLoggedInUser,
   createBoard,
   getAllPublicBoards,
   getBoardById,
@@ -15,6 +16,7 @@ import { upload } from "../middleware/multer.middleware";
 
 const router: Router = Router();
 
+router.route("/boards").get(verifyJWT, getAllBoardsForLoggedInUser);  // return all boards for logged in user only
 router.route("/create").post(verifyJWT, createBoard);
 router.route("/all-boards").get(getAllPublicBoards);
 router.route("/:boardId").get(getBoardById);

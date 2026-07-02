@@ -6,6 +6,24 @@ import { uploadOnCloudinary } from "../utils/cloudinary";
 import { ApiResponse } from "../utils/ApiResponse";
 import fs from "fs";
 
+const getAllBoardsForLoggedInUser: RequestHandler = asyncHandler(async (req, res) => {    // return all boards for logged in user only
+  const userId = req.user?.id as number;
+  console.log("userId", userId);
+  if (Number.isNaN(userId)) {
+    throw new ApiError(400, "Invalid user id");
+  }
+
+  const boards = await prisma.board.findMany({
+    where: {
+      creatorId: userId,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, boards, "Boards fetched successfully"));
+});
+
 const createBoard: RequestHandler = asyncHandler(async (req, res) => {
   try {
     console.log("createBoard called");
@@ -147,6 +165,7 @@ const updateBoardDetails: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const updateBoardCoverImage: RequestHandler = asyncHandler(async (req, res) => {
+  console.log("updateBoardCoverImage called");
   try {
     const { boardId } = req.params;
     const coverImageLocalPath = req.file?.path;
@@ -300,6 +319,7 @@ const createTaskList: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export {
+  getAllBoardsForLoggedInUser,
   createBoard,
   getAllPublicBoards,
   getBoardById,

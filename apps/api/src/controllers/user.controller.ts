@@ -220,12 +220,14 @@ const logoutUser: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken: RequestHandler = asyncHandler(async (req, res) => {
+  console.log("req.cookies", req.cookies);  
   try {
     const incomingRefrehToken =
       req.cookies?.refreshToken || req.body?.refreshToken;
     if (!incomingRefrehToken) {
       throw new ApiError(401, "Unauthorized request");
     }
+    console.log("1. incomingRefrehToken", incomingRefrehToken);
 
     let decodedToken;
     try {
@@ -236,6 +238,7 @@ const refreshAccessToken: RequestHandler = asyncHandler(async (req, res) => {
     } catch (error) {
       throw new ApiError(401, "Invalid refresh token");
     }
+    console.log("2. decodedToken", decodedToken);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -246,6 +249,7 @@ const refreshAccessToken: RequestHandler = asyncHandler(async (req, res) => {
     if (!user) {
       throw new ApiError(404, "User not found");
     }
+    console.log("3. user", user);
 
     if (user.refreshToken !== incomingRefrehToken) {
       throw new ApiError(
@@ -405,8 +409,8 @@ const updateUserAvatar: RequestHandler = asyncHandler(async (req, res) => {
 
 // board controllers
 
-const getAllBoards: RequestHandler = asyncHandler(async (req, res) => {
-  const userId = Number(req.user?.id);
+const getUserBoards: RequestHandler = asyncHandler(async (req, res) => {
+  const userId = Number(req.params.userId);
   if (Number.isNaN(userId)) {
     throw new ApiError(400, "Invalid user id");
   }
@@ -414,13 +418,16 @@ const getAllBoards: RequestHandler = asyncHandler(async (req, res) => {
   const boards = await prisma.board.findMany({
     where: {
       creatorId: userId,
+      isPublic: true,
     },
   });
 
   return res
     .status(200)
-    .json(new ApiResponse(200, boards, "Boards fetched successfully"));
-});
+    .json(new ApiResponse(200, boards, "User boards fetched successfully"));
+})
+
+
 
 export {
   registerUser,
@@ -432,5 +439,5 @@ export {
   getCurrentUser,
   updateAccountDetails,
   updateUserAvatar,
-  getAllBoards,
+  getUserBoards,
 };
