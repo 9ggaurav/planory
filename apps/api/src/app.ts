@@ -20,12 +20,15 @@ app.use(cookieParser());
 // routes import
 import userRouter from "./routes/user.routes";
 import boardRouter from "./routes/board.routes";
-import taskListRouter from "./routes/tasklist.route"
+import taskListRouter from "./routes/tasklist.route";
+import taskRouter from "./routes/task.routes";
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/boards", boardRouter);
-app.use("/api/v1/boards", taskListRouter);
+app.use("/api/v1/tasklists", taskListRouter);
+app.use("/api/v1/tasks", taskRouter);
+
 
 app.get("/", (req: Request, res: Response) => {
   res.send({ message: "Hello, World!" });

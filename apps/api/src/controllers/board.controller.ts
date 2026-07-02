@@ -51,34 +51,38 @@ const getAllPublicBoards: RequestHandler = asyncHandler(async (req, res) => {
       isTemplate: true,
       coverImage: true,
       creatorId: true,
-    }
-  })
-  return res.status(200).json(new ApiResponse(200, boards, "Public boards fetched successfully"));
+    },
+  });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, boards, "Public boards fetched successfully"));
 });
 
 const getBoardById: RequestHandler = asyncHandler(async (req, res) => {
   try {
     const { boardId } = req.params;
-  
+
     if (!boardId) {
       throw new ApiError(400, "Board ID is required");
     }
-  
+
     const board = await prisma.board.findUnique({
       where: {
         id: Number(boardId),
-      }
-    })
-  
+      },
+    });
+
     if (!board) {
       throw new ApiError(404, "Board not found");
     }
-  
-    return res.status(200).json(new ApiResponse(200, board, "Board fetched successfully"));
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, board, "Board fetched successfully"));
   } catch (error) {
     throw new ApiError(500, "Failed to fetch board", [error]);
   }
-})
+});
 
 const userBoards: RequestHandler = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
@@ -98,25 +102,30 @@ const userBoards: RequestHandler = asyncHandler(async (req, res) => {
       isTemplate: true,
       coverImage: true,
       creatorId: true,
-    }
+    },
   });
 
-  return res.status(200).json(new ApiResponse(200, boards, "User's boards fetched successfully"));
-})
+  return res
+    .status(200)
+    .json(new ApiResponse(200, boards, "User's boards fetched successfully"));
+});
 
 const updateBoardDetails: RequestHandler = asyncHandler(async (req, res) => {
   try {
     const { boardId } = req.params;
     const { title, tag, isPublic, isTemplate } = req.body;
-  
+
     if (!boardId) {
       throw new ApiError(400, "Board ID is required");
     }
-  
+
     if (!title && !tag && isPublic === undefined && isTemplate === undefined) {
-      throw new ApiError(400, "At least one field (title, tag, isPublic, isTemplate) must be provided for update");
+      throw new ApiError(
+        400,
+        "At least one field (title, tag, isPublic, isTemplate) must be provided for update",
+      );
     }
-  
+
     const board = await prisma.board.update({
       where: {
         id: Number(boardId),
@@ -127,57 +136,64 @@ const updateBoardDetails: RequestHandler = asyncHandler(async (req, res) => {
         isPublic: isPublic !== undefined ? isPublic : undefined,
         isTemplate: isTemplate !== undefined ? isTemplate : undefined,
       },
-    })
-  
-    return res.status(200).json(new ApiResponse(200, board, "Board details updated successfully"));
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, board, "Board details updated successfully"));
   } catch (error) {
-    throw new ApiError(500, "something went wrong")
+    throw new ApiError(500, "something went wrong");
   }
-})
+});
 
 const updateBoardCoverImage: RequestHandler = asyncHandler(async (req, res) => {
   try {
-    const {boardId} = req.params;
+    const { boardId } = req.params;
     const coverImageLocalPath = req.file?.path;
-  
+
     if (!boardId) {
-      throw new ApiError(400, "board not provided")
+      throw new ApiError(400, "board not provided");
     }
-  
+
     if (!coverImageLocalPath) {
-      throw new ApiError(400, "cover image not provided")
+      throw new ApiError(400, "cover image not provided");
     }
 
     console.log("coverImageLocalPath", coverImageLocalPath);
-  
+
     const coverImageLink = await uploadOnCloudinary(coverImageLocalPath);
-  
+
     if (!coverImageLink) {
-      throw new ApiError(500, "something went wrong while uploading image on cloudinary")
+      throw new ApiError(
+        500,
+        "something went wrong while uploading image on cloudinary",
+      );
     }
-  
+
     await prisma.board.update({
       where: {
-        id: Number(boardId)
-      }, 
+        id: Number(boardId),
+      },
       data: {
-        coverImage: coverImageLink.url
-      }
-    })
-  
+        coverImage: coverImageLink.url,
+      },
+    });
+
     await fs.unlink(coverImageLocalPath, (error) => {
-      if (error) throw new ApiError(500, "error while deleting local file")
-      console.log("local file deleted successfully")
-    })
-  
-    return res.status(200).json(new ApiResponse(200, "coverImage Updated sucessfully"))
+      if (error) throw new ApiError(500, "error while deleting local file");
+      console.log("local file deleted successfully");
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "coverImage Updated sucessfully"));
   } catch (error) {
-    throw new ApiError(500, "something went wrong")
+    throw new ApiError(500, "something went wrong");
   }
-})
+});
 
 const deleteBoardById: RequestHandler = asyncHandler(async (req, res) => {
-  const {boardId} = req.params;
+  const { boardId } = req.params;
 
   if (!boardId) {
     throw new ApiError(400, "cannot find board");
@@ -185,11 +201,112 @@ const deleteBoardById: RequestHandler = asyncHandler(async (req, res) => {
 
   const deletedBoard = await prisma.board.delete({
     where: {
-      id: Number(boardId)
-    }
-  })
+      id: Number(boardId),
+    },
+  });
 
-  return res.status(200).json(new ApiResponse(200, deletedBoard, "board has been deleted successfully!"))
-})
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        deletedBoard,
+        "board has been deleted successfully!",
+      ),
+    );
+});
 
-export { createBoard, getAllPublicBoards, getBoardById, userBoards, updateBoardDetails, updateBoardCoverImage, deleteBoardById };
+// tasklist controller functions
+const getAllTasklists: RequestHandler = asyncHandler(async (req, res) => {
+  const boardId = Number(req.params.boardId);
+  if (Number.isNaN(boardId)) {
+    throw new ApiError(400, "Invalid board id");
+  }
+  const board = await prisma.board.findUnique({
+    where: {
+      id: boardId,
+    },
+  });
+  if (!board) {
+    return new ApiError(400, "Board not found");
+  }
+
+  const tasklists = await prisma.taskList.findMany({
+    where: {
+      boardId,
+    },
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, tasklists, "retriving all tasklists"));
+});
+
+const createTaskList: RequestHandler = asyncHandler(async (req, res) => {
+  const boardId = Number(req.params.boardId);
+  if (Number.isNaN(boardId)) {
+    throw new ApiError(400, "Invalid board id");
+  }
+
+  const title = req.body.title?.trim();
+  if (!title) {
+    throw new ApiError(400, "title can't be null");
+  }
+
+  const board = await prisma.board.findUnique({
+    where: {
+      id: boardId,
+    },
+  });
+
+  if (!board) {
+    throw new ApiError(404, "Board not found");
+  }
+
+  const lastTaskList = await prisma.taskList.findFirst({
+    where: {
+      boardId: Number(boardId),
+    },
+    orderBy: {
+      position: "desc",
+    },
+  });
+
+  let maxPosition;
+  if (!lastTaskList) {
+    maxPosition = 0;
+  } else {
+    maxPosition = lastTaskList.position;
+  }
+
+  const createdTaskList = await prisma.taskList.create({
+    data: {
+      title,
+      isArchived: false,
+      boardId: Number(boardId),
+      position: maxPosition + 1000,
+    },
+  });
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        createdTaskList,
+        "taskList has been created successfully!",
+      ),
+    );
+});
+
+export {
+  createBoard,
+  getAllPublicBoards,
+  getBoardById,
+  userBoards,
+  updateBoardDetails,
+  updateBoardCoverImage,
+  deleteBoardById,
+  getAllTasklists,
+  createTaskList,
+};

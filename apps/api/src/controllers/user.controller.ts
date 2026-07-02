@@ -403,6 +403,25 @@ const updateUserAvatar: RequestHandler = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Avatar updated successfully"));
 });
 
+// board controllers
+
+const getAllBoards: RequestHandler = asyncHandler(async (req, res) => {
+  const userId = Number(req.user?.id);
+  if (Number.isNaN(userId)) {
+    throw new ApiError(400, "Invalid user id");
+  }
+
+  const boards = await prisma.board.findMany({
+    where: {
+      creatorId: userId,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, boards, "Boards fetched successfully"));
+});
+
 export {
   registerUser,
   getUsers,
@@ -413,4 +432,5 @@ export {
   getCurrentUser,
   updateAccountDetails,
   updateUserAvatar,
+  getAllBoards,
 };

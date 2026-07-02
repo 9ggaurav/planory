@@ -6,7 +6,8 @@ import {
   logoutUser,
   refreshAccessToken,
   changeCurrentPassword,
-  getCurrentUser
+  getCurrentUser,
+  getAllBoards,
 } from "../controllers/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
@@ -26,5 +27,8 @@ router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/reset-password").post(verifyJWT, changeCurrentPassword);
 router.route("/me").get(verifyJWT, getCurrentUser);
+
+// board routes
+router.route("/:userId/boards").get(verifyJWT, getAllBoards);
 
 export default router;

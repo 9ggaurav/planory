@@ -1,22 +1,24 @@
 import { verifyJWT } from "../middleware/auth.middleware";
 import {
-  createTaskList,
+  getTaskListById,
   editTaskList,
-  reorderTasklists,
-  getAllTasklists,
-  deleteTasklistById
+  moveTaskList,
+  deleteTasklistById,
+  createTask,
+  getAllTasks
 } from "../controllers/tasklist.controller";
 import { Router } from "express";
 
 const router: Router = Router();
 
-router.route("/:boardId/create-tasklist").post(verifyJWT, createTaskList);
-router.route("/:boardId/:tasklistId/edit").put(verifyJWT, editTaskList);
-router
-  .route("/:boardId/tasklist/:tasklistId/reorder")
-  .put(verifyJWT, reorderTasklists);
+router.route("/:tasklistId").get(verifyJWT, getTaskListById);
+router.route("/:tasklistId").patch(verifyJWT, editTaskList);
+router.route("/:tasklistId/move").patch(verifyJWT, moveTaskList);
+router.route("/:tasklistId").delete(verifyJWT, deleteTasklistById);
 
-router.route("/:boardId/tasklists").get(verifyJWT, getAllTasklists)
-router.route("/:boardId/tasklist/:tasklistId/delete").delete(deleteTasklistById);
+// task routes
+router.route("/:tasklistId/tasks").post(verifyJWT, createTask);
+router.route("/:tasklistId/tasks").get(verifyJWT, getAllTasks);
+
 
 export default router;

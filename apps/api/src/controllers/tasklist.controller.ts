@@ -1,67 +1,28 @@
+
 import type { RequestHandler } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/ApiError";
 import { prisma } from "../lib/prisma";
-import { uploadOnCloudinary } from "../utils/cloudinary";
 import { ApiResponse } from "../utils/ApiResponse";
 import fs from "fs";
+import type { Prisma } from '../generated/prisma/browser';
 
-const createTaskList: RequestHandler = asyncHandler(async (req, res) => {
-  const boardId = Number(req.params.boardId);
-  if (Number.isNaN(boardId)) {
-    throw new ApiError(400, "Invalid board id");
+const getTaskListById: RequestHandler = asyncHandler(async (req, res) => {
+  const tasklistId = Number(req.params.tasklistId);
+  if (Number.isNaN(tasklistId)) {
+    throw new ApiError(400, "Invalid tasklist id");
   }
 
-  const title = req.body.title?.trim();
-  if (!title) {
-    throw new ApiError(400, "title can't be null");
-  }
-
-  const board = await prisma.board.findUnique({
+  const tasklist = await prisma.taskList.findUnique({
     where: {
-      id: boardId,
+      id: tasklistId,
     },
-  });
+  })
 
-  if (!board) {
-    throw new ApiError(404, "Board not found");
-  }
-
-  const lastTaskList = await prisma.taskList.findFirst({
-    where: {
-      boardId: Number(boardId),
-    },
-    orderBy: {
-      position: "desc",
-    },
-  });
-
-  let maxPosition;
-  if (!lastTaskList) {
-    maxPosition = 0;
-  } else {
-    maxPosition = lastTaskList.position;
-  }
-
-  const createdTaskList = await prisma.taskList.create({
-    data: {
-      title,
-      isArchived: false,
-      boardId: Number(boardId),
-      position: maxPosition + 1000,
-    },
-  });
-
-  return res
-    .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        createdTaskList,
-        "taskList has been created successfully!",
-      ),
-    );
-});
+  return res.status(200).json(
+    new ApiResponse(200, tasklist, "retrieving tasklist by id")
+  );
+})
 
 const editTaskList: RequestHandler = asyncHandler(async (req, res) => {
   const tasklistId = Number(req.params.tasklistId);
@@ -96,97 +57,192 @@ const editTaskList: RequestHandler = asyncHandler(async (req, res) => {
     );
 });
 
-const reorderTasklists: RequestHandler = asyncHandler(async (req, res) => {
-  const { boardId, tasklistId } = req.params;
-  if (Number.isNaN(Number(boardId)) || Number.isNaN(Number(tasklistId))) {
-    throw new ApiError(400, "Invalid board id or tasklist id");
+const moveTaskList: RequestHandler = asyncHandler(async (req, res) => {
+  const taskListId = Number(req.params.tasklistId);
+
+  if (Number.isNaN(taskListId)) {
+    throw new ApiError(400, "Invalid task list id");
   }
 
-  const { position } = req.body;
-  if (position === undefined || typeof position !== "number") {
-    throw new ApiError(400, "Position must be provided and must be a number");
+  const { position, boardId } = req.body;
+
+  if (typeof position !== "number" || !Number.isFinite(position)) {
+    throw new ApiError(400, "Position must be a valid number");
   }
 
-  const tasklist = await prisma.taskList.findUnique({
+  const taskList = await prisma.taskList.findUnique({
     where: {
-      id: Number(tasklistId),
+      id: taskListId,
     },
   });
 
-  if (!tasklist) {
-    throw new ApiError(404, "Tasklist not found");
+  if (!taskList) {
+    throw new ApiError(404, "Task list not found");
+  }
+
+  const updateData: Prisma.TaskListUpdateInput = {
+    position,
+  };
+
+  // Only if the client wants to move it to another board
+  if (boardId !== undefined) {
+    const parsedBoardId = Number(boardId);
+
+    if (Number.isNaN(parsedBoardId)) {
+      throw new ApiError(400, "Invalid board id");
+    }
+
+    const board = await prisma.board.findUnique({
+      where: {
+        id: parsedBoardId,
+      },
+    });
+
+    if (!board) {
+      throw new ApiError(404, "Board not found");
+    }
+
+    updateData.board = {
+      connect: {
+        id: parsedBoardId,
+      },
+    };
   }
 
   const updatedTaskList = await prisma.taskList.update({
     where: {
-      id: Number(tasklistId),
+      id: taskListId,
     },
-    data: {
-      position,
+    data: updateData,
+  });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      updatedTaskList,
+      "Task list moved successfully."
+    )
+  );
+});
+
+const deleteTasklistById: RequestHandler = asyncHandler(async (req, res) => {
+  const boardId = Number(req.params.boardId);
+  const tasklistId = Number(req.params.tasklistId);
+  if (Number.isNaN(boardId) || Number.isNaN(tasklistId)) {
+    throw new ApiError(400, "Invalid board id or tasklist id");
+  }
+  const board = await prisma.board.findUnique({
+    where: {
+      id: boardId,
+    },
+  });
+  const tasklist = await prisma.taskList.findUnique({
+    where: {
+      id: tasklistId,
+    },
+  });
+  if (!board || !tasklist) {
+    return new ApiError(400, "Board or tasklist not found");
+  }
+
+  const deletedTasklist = await prisma.taskList.delete({
+    where: {
+      id: tasklistId,
     },
   });
 
   return res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        updatedTaskList,
-        "taskList has been reordered successfully!",
-      ),
+      new ApiResponse(200, deletedTasklist, "Tasklist deleted successfully!"),
     );
 });
 
-const getAllTasklists: RequestHandler = asyncHandler(async (req, res) => {
-    const boardId = Number(req.params.boardId);
-    if (Number.isNaN(boardId)) {
-        throw new ApiError(400, "Invalid board id");
-    }
-    const board = await prisma.board.findUnique({
-        where: {
-            id: boardId
-        }
-    })
-    if (!board) {
-        return new ApiError(400, "Board not found");
-    }
+// task controllers
 
-    const tasklists  = await prisma.taskList.findMany({
-        where: {
-            boardId
-        }
-    })
+const createTask: RequestHandler = asyncHandler(async (req, res) => {
+  const taskListId = Number(req.params.taskListId);
+  if (Number.isNaN(taskListId)) {
+    throw new ApiError(400, "Invalid task list id");
+  }
 
-    return res.status(201).json(new ApiResponse(201, tasklists, "retriving all tasklists"))
-})
+  const title = req.body.title?.trim();
+  if (!title) {
+    throw new ApiError(400, "title can't be null");
+  }
 
-const deleteTasklistById: RequestHandler = asyncHandler(async (req, res) => {
-    const boardId = Number(req.params.boardId);
-    const tasklistId = Number(req.params.tasklistId);
-    if (Number.isNaN(boardId) || Number.isNaN(tasklistId)) {
-        throw new ApiError(400, "Invalid board id or tasklist id");
-    }
-    const board = await prisma.board.findUnique({
-        where: {
-            id: boardId
-        }
-    })
-    const tasklist = await prisma.taskList.findUnique({
-        where: {
-            id: tasklistId
-        }
-    })
-    if (!board || !tasklist) {
-        return new ApiError(400, "Board or tasklist not found");
-    }
+  const taskList = await prisma.taskList.findUnique({
+    where: {
+      id: taskListId,
+    },
+  });
 
-    const deletedTasklist = await prisma.taskList.delete({
-        where: {
-            id: tasklistId
-        }
-    })
+  if (!taskList) {
+    throw new ApiError(404, "taskList not found");
+  }
 
-    return res.status(200).json(new ApiResponse(200, deletedTasklist, "Tasklist deleted successfully!"))
-})
+  const lastTask = await prisma.task.findFirst({
+    where: {
+      taskListId: taskListId,
+    },
+    orderBy: {
+      position: "desc",
+    },
+  });
 
-export { createTaskList, editTaskList, reorderTasklists, getAllTasklists, deleteTasklistById };
+  let maxPosition;
+  if (!lastTask) {
+    maxPosition = 0;
+  } else {
+    maxPosition = lastTask.position;
+  }
+
+  const createdTask = await prisma.task.create({
+    data: {
+      title,
+      isDone: false,
+      taskListId: taskListId,
+      position: maxPosition + 1000,
+    },
+  });
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(201, createdTask, "task has been created successfully!"),
+    );
+});
+
+const getAllTasks: RequestHandler = asyncHandler(async (req, res) => {
+  const taskListId = Number(req.params.tasklistId);
+  if (Number.isNaN(taskListId)) {
+    throw new ApiError(400, "Invalid task list id");
+  }
+  const taskList = await prisma.taskList.findUnique({
+    where: {
+      id: taskListId,
+    },
+  });
+  if (!taskList) {
+    return new ApiError(400, "Task list not found");
+  }
+
+  const tasks = await prisma.task.findMany({
+    where: {
+      taskListId,
+    },
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, tasks, "retriving all tasks"));
+});
+
+export {
+  getTaskListById,
+  editTaskList,
+  moveTaskList,
+  createTask,
+  deleteTasklistById,
+  getAllTasks
+};
