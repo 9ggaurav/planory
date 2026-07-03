@@ -9,7 +9,8 @@ import {
   updateAccountDetails,
   updateUserAvatar,
   getCurrentUser,
-  getUserBoards
+  getUserBoards,
+  deleteUserById
 } from "../controllers/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
@@ -31,6 +32,7 @@ router.route("/reset-password").post(verifyJWT, changeCurrentPassword);
 router.route("/me").get(verifyJWT, getCurrentUser);
 router.route("/users").patch(verifyJWT, updateAccountDetails);
 router.route("/avatar").put(verifyJWT, upload.single("avatar"), updateUserAvatar);
+router.route("/:userId").delete(deleteUserById); // delete user by id (admin only)
 
 // board routes
 router.route("/:userId/boards").get(verifyJWT, getUserBoards);  // return all boards for logged in user only

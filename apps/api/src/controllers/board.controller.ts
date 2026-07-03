@@ -27,7 +27,6 @@ const getAllBoardsForLoggedInUser: RequestHandler = asyncHandler(async (req, res
 });
 
 const createBoard: RequestHandler = asyncHandler(async (req, res) => {
-  try {
     console.log("createBoard called");
     const { title, tag, isPublic, isTemplate, cid } = req.body;
     if (!title || !tag || isPublic === undefined || isTemplate === undefined) {
@@ -53,10 +52,7 @@ const createBoard: RequestHandler = asyncHandler(async (req, res) => {
     return res
       .status(201)
       .json(new ApiResponse(201, board, "Board created successfully"));
-  } catch (error) {
-    throw new ApiError(500, "Failed to create board", [error]);
-  }
-});
+  });
 
 const getAllPublicBoards: RequestHandler = asyncHandler(async (req, res) => {
   const boards = await prisma.board.findMany({
@@ -79,7 +75,6 @@ const getAllPublicBoards: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const getBoardById: RequestHandler = asyncHandler(async (req, res) => {
-  try {
     const { boardId } = req.params;
 
     if (!boardId) {
@@ -99,10 +94,7 @@ const getBoardById: RequestHandler = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, board, "Board fetched successfully"));
-  } catch (error) {
-    throw new ApiError(500, "Failed to fetch board", [error]);
-  }
-});
+  });
 
 // ?
 const userBoards: RequestHandler = asyncHandler(async (req, res) => {
@@ -132,7 +124,6 @@ const userBoards: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const updateBoardDetails: RequestHandler = asyncHandler(async (req, res) => {
-  try {
     const { boardId } = req.params;
     const { title, tag, isPublic, isTemplate } = req.body;
 
@@ -162,14 +153,9 @@ const updateBoardDetails: RequestHandler = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, board, "Board details updated successfully"));
-  } catch (error) {
-    throw new ApiError(500, "something went wrong");
-  }
-});
+  });
 
 const updateBoardCoverImage: RequestHandler = asyncHandler(async (req, res) => {
-  console.log("updateBoardCoverImage called");
-  try {
     const { boardId } = req.params;
     const coverImageLocalPath = req.file?.path;
 
@@ -209,10 +195,7 @@ const updateBoardCoverImage: RequestHandler = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, "coverImage Updated sucessfully"));
-  } catch (error) {
-    throw new ApiError(500, "something went wrong");
-  }
-});
+  });
 
 const deleteBoardById: RequestHandler = asyncHandler(async (req, res) => {
   const { boardId } = req.params;
@@ -250,7 +233,7 @@ const getAllTasklists: RequestHandler = asyncHandler(async (req, res) => {
     },
   });
   if (!board) {
-    return new ApiError(400, "Board not found");
+    throw new ApiError(400, "Board not found");
   }
 
   const tasklists = await prisma.taskList.findMany({

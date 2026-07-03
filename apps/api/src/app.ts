@@ -2,6 +2,7 @@ import express from "express";
 import type { Request, Response, Express } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./middleware/error.middleware";
 
 const app: Express = express();
 
@@ -32,5 +33,7 @@ app.use("/api/v1/tasks", taskRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send({ message: "Hello, World!" });
 });
+
+app.use(errorHandler);
 
 export default app;
