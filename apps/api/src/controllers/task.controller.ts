@@ -112,7 +112,7 @@ const deleteTaskById: RequestHandler = asyncHandler(async (req, res) => {
     },
   });
   if (!task) {
-    return new ApiError(400, "Task not found");
+    throw new ApiError(400, "Task not found");
   }
 
   const deletedTask = await prisma.task.delete({

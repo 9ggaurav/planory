@@ -125,6 +125,7 @@ const getUsers: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const loginUser: RequestHandler = asyncHandler(async (req, res) => {
+  console.log("login called")
   const { email, password } = req.body;
 
   if (!email) {

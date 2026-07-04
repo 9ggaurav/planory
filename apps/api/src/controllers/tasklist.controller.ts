@@ -137,7 +137,7 @@ const deleteTasklistById: RequestHandler = asyncHandler(async (req, res) => {
     },
   });
   if (!tasklist) {
-    return new ApiError(400, "Tasklist not found");
+    throw new ApiError(400, "Tasklist not found");
   }
 
   const deletedTasklist = await prisma.taskList.delete({
@@ -219,7 +219,7 @@ const getAllTasks: RequestHandler = asyncHandler(async (req, res) => {
     },
   });
   if (!taskList) {
-    return new ApiError(400, "Task list not found");
+     new ApiError(400, "Task list not found");
   }
 
   const tasks = await prisma.task.findMany({

@@ -77,6 +77,8 @@ export default function SignupPage() {
       formData.append('avatar', avatar);
     }
 
+    console.log(formData)
+
     try {
       await axios.post('http://localhost:3000/api/v1/users/register', formData);
       toast('Signup successful! Redirecting to login...', { type: 'success' });
@@ -145,8 +147,7 @@ export default function SignupPage() {
               placeholder="Confirm password"
               required
             />
-            
-            <label htmlFor="avatar">Avatar</label>
+          
             <Input accept='image/' name="avatar" onChange={handleFileChange} type="file" placeholder="avatar" />
           </div>
 
