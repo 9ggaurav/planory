@@ -1,11 +1,13 @@
 'use client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
+import { useSearchParams } from 'next/navigation';
+import api from "../../lib/axiosClient";
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -13,11 +15,19 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
+  console.log(process.env.API_BASE_URL)
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
   const router = useRouter();
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get("registered") === "true"){
+      toast.success("Signup successfull. Please log in.")
+    }
+  }, [searchParams])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({
@@ -42,10 +52,11 @@ export default function LoginPage() {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/v1/users/login', {
+      await api.post('/users/login', {
         email: form.email,
         password: form.password,
       }, { withCredentials: true});
+
       toast('Login successful! Redirecting to Home...', { type: 'success' });
       setForm({
         email: '',

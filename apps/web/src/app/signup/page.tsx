@@ -6,6 +6,7 @@ import axios from 'axios';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
+import api from "../../lib/axiosClient";
 
 const signupSchema = z
   .object({
@@ -80,7 +81,7 @@ export default function SignupPage() {
     console.log(formData)
 
     try {
-      await axios.post('http://localhost:3000/api/v1/users/register', formData);
+      await api.post('/users/register', formData);
       toast('Signup successful! Redirecting to login...', { type: 'success' });
       setForm({
         email: '',
@@ -90,9 +91,7 @@ export default function SignupPage() {
       });
       setAvatar(null);
 
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
+      router.push('/login?registered=true');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message ?? 'Something went wrong';
