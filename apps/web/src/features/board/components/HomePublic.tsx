@@ -1,8 +1,28 @@
 import DisplayBoardCard from "@/features/board/components/DisplayBoardCard";
-import type {userBoard as userBoardType} from "@repo/shared";
 import { UsersRound } from "lucide-react";
+import api from "../../../lib/axiosClient";
+import { useEffect, useState } from "react";
+import type { userBoard as userBoardtype } from "@repo/shared";
 
-export default function PublicBoards({publicBoards}: {publicBoards: userBoardType[]}) {
+
+export default function PublicBoards() {
+    const [boards, setBoards] = useState<userBoardtype[] | null>();
+    useEffect(() => {
+        async function fetchPublicBoards() {
+            try {
+                const response = await api("/boards/boards");
+                const parsedResponse = response.data;
+                setBoards(parsedResponse.data);
+            } catch(error) {
+                console.error(error);
+            }
+        }
+
+        fetchPublicBoards();
+    }, [])
+
+    console.log(boards);
+
     return (
         <section className="mt-8">
             <div className="text-[#1E3F36]">
@@ -14,14 +34,14 @@ export default function PublicBoards({publicBoards}: {publicBoards: userBoardTyp
             </div>
             <div>
                 <div className="mt-4 grid grid-cols-1 gap-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                    {publicBoards.map((board, index) => (
+                    {boards && boards?.map((board, index) => (
                         board.isPublic &&
                         <DisplayBoardCard
                             id={board.id}
                             key={index}
                             coverImage={board.coverImage}
                             title={board.title}
-                            tag={board.tag}
+                            tag={board.tag[0]}
                             isTemplate={board.isTemplate}
                             creator={board.creator}
                         />

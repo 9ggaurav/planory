@@ -8,12 +8,13 @@ import type { userBoard as BoardType } from '@repo/shared';
 import { useBoards } from "@/providers/BoardContext"
 import AddNewBoard from '@/features/board/components/AddNewBoard';
 import Link from 'next/link';
+import { useAuth } from '@/providers/AuthProvider';
 
 const navLinks = [
   { name: "Dashboard", href: "/boards" },
   { name: "Projects", href: "#" },
   { name: "Info", href: "#" },
-  { name: "Account", href: "#" },
+  // { name: "Account", href: "#" },
 ];
 
 export default function NavBar() {
@@ -29,6 +30,8 @@ export default function NavBar() {
     created_at: "",
     updated_at: ""
   });
+  const {user} = useAuth();
+  console.log("user: ", user);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -94,6 +97,7 @@ export default function NavBar() {
         </div>
 
         {/* Desktop nav links */}
+        <div></div>
         <ul className="hidden md:flex items-center gap-5">
           {navLinks.map(link => (
             <li key={link.name}>
@@ -105,6 +109,14 @@ export default function NavBar() {
               </Link>
             </li>
           ))}
+          <li>
+            <Link
+              href="/me"
+              className="text-[13px] font-medium text-neutral-500 hover:text-neutral-800 transition-colors underline"
+            >
+              {user?.name}
+            </Link>
+          </li>
         </ul>
 
         {/* Mobile menu toggle */}

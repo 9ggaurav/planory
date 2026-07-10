@@ -73,7 +73,8 @@ async function main() {
   for (const title of boards) {
     await prisma.board.create({
       data: {
-        coverImage: "cover-image",
+        coverImage:
+          "https://imgs.search.brave.com/d4DRfwkA5hIf6QHx1BnSJiqCQPiPeIuu9gG_RhejD8E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aGFsbG9mc2VyaWVz/LmNvbS93cC1jb250/ZW50L3VwbG9hZHMv/MjAyNC8xMC9TY3Jl/ZW5zaG90LTIwMjQt/MTAtMTAtMTY1MDUy/LnBuZw",
         title,
         tag: ["seed"],
         isPublic: false,

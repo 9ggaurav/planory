@@ -2,7 +2,7 @@
 import {createContext, useContext, useState} from "react";
 import type {Tasklist as TasklistType} from "@repo/shared";
 import { useParams } from "next/navigation";
-import { taskLists as defaultTasklists } from "@/app/b/[boardid]/mockData";
+import { taskLists as defaultTasklists } from "@/lib/mockData";
 
 const tasklistContext = createContext<{
     tasklist: TasklistType[];

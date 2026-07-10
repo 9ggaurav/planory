@@ -1,7 +1,8 @@
 "use client";
-import {createContext, useContext, useState} from "react";
+import {createContext, useContext, useState, useEffect} from "react";
 import type { userBoard as BoardType } from "@repo/shared";
-import {boards as defaultBoards} from "@/app/b/[boardid]/mockData";
+import {boards as defaultBoards} from "@/lib/mockData";
+import api from "@/lib/axiosClient";
 
 const BoardContext = createContext<{
     boards: BoardType[];
@@ -10,6 +11,7 @@ const BoardContext = createContext<{
 
 export function BoardProvider({ children }: {children: React.ReactNode}) {
     const [boards, setBoards] = useState<BoardType[]>([...defaultBoards]);
+
   const addBoard = (newBoard: BoardType) => {
     setBoards(prev => [...prev, newBoard]);
   };

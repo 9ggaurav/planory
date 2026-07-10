@@ -17,6 +17,8 @@ import {
   FieldTitle,
 } from "@/components/ui/field"
 import type { userBoard as BoardType } from '@repo/shared';
+import { useState } from "react"
+import {z} from "zod";
 
 type ChildProps = {
   boardData: BoardType;
@@ -26,8 +28,73 @@ type ChildProps = {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+const newBoardSchema = z.object({
+  title: z.string(),
+  tag: z.array(z.string()),
+  isPublic: z.boolean(),
+  isTemplate: z.boolean(),
+})
+
 
 export default function AddNewBoard({boardData, isDialogOpen, setIsDialogOpen, handleSubmit, handleChange}: ChildProps) {
+  const [form, setForm] = useState({
+    title: "",
+    tag: [],
+    isPublic: false,
+    isTemplate: false
+  })
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      console.log("Please select a valid image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return;
+    }
+    setCoverImage(file);
+  }
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const result = newBoardSchema.safeParse(form);
+
+    if (!result.success) {
+      console.log('Validation errors: ', result.error.flatten());
+      const errors = result.error.flatten().fieldErrors;
+
+      Object.values(errors).forEach(messages => {
+        if (messages?.[0]) {
+          console.log(messages[0])
+        }
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', form.title);
+    formData.append('tag', JSON.stringify(form.tag));
+    formData.append('isPublic', JSON.stringify(form.isPublic));
+    formData.append('isTemplate', JSON.stringify(form.isTemplate));
+
+    if (coverImage) {
+      formData.append('coverImage', coverImage);
+    }
+
+    console.log(formData)
+
+  }
+
     return (
         <>
             <Popover open={isDialogOpen} onOpenChange={setIsDialogOpen}>

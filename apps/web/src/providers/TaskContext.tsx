@@ -1,7 +1,7 @@
 "use client";
 import {createContext, useContext, useState} from "react";
 import type { inboxTask as inboxTaskType } from "@repo/shared";
-import {tasks as defaultTasks} from "@/app/b/[boardid]/mockData"
+import {tasks as defaultTasks} from "@/lib/mockData"
 
 const TaskContext = createContext<{
     Tasks: inboxTaskType[];
