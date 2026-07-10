@@ -17,7 +17,7 @@ import { upload } from "../middleware/multer.middleware";
 const router: Router = Router();
 
 router.route("/user-boards").get(verifyJWT, getAllBoardsForLoggedInUser); // return all boards for logged in user only
-router.route("/boards").post(verifyJWT, createBoard);
+router.route("/boards").post(verifyJWT,upload.single("coverImage"), createBoard);
 router.route("/boards").get(getAllPublicBoards);
 router.route("/:boardId").get(getBoardById);
 router.route("/:boardId").patch(verifyJWT, updateBoardDetails);

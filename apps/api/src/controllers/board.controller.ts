@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError";
 import { prisma } from "../lib/prisma";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { ApiResponse } from "../utils/ApiResponse";
-import fs from "fs";
+import fs from "fs/promises";
 
 // get boards for logged in user only
 const getAllBoardsForLoggedInUser: RequestHandler = asyncHandler(
@@ -30,13 +30,30 @@ const getAllBoardsForLoggedInUser: RequestHandler = asyncHandler(
 
 const createBoard: RequestHandler = asyncHandler(async (req, res) => {
   console.log("createBoard called");
-  const { title, tag, isPublic, isTemplate, cid } = req.body;
+  const { title, tag} = req.body;
+  const isPublic = req.body.isPublic === "true";
+  const isTemplate = req.body.isTemplate === "true";
   if (!title || !tag || isPublic === undefined || isTemplate === undefined) {
     throw new ApiError(400, "Missing required fields");
   }
 
-  const defaultCoverImageUrl =
-    "https://res.cloudinary.com/dnzei2k46/image/upload/v1757695992/sample.jpg";
+  const coverImageLocalPath = req.file?.path as string;
+  let coverImageLink;
+  if (!coverImageLocalPath) {
+    throw new ApiError(400, "need coverImage file");
+  }
+
+  coverImageLink = await uploadOnCloudinary(coverImageLocalPath);
+
+  if (!coverImageLink) {
+    throw new ApiError(500, "cover image upload failed on cloudinary");
+  }
+
+  try {
+    await fs.unlink(coverImageLocalPath);
+  } catch(error) {
+    throw new ApiError(500, "Failed to delete cover image file from server");
+  }
 
   const board = await prisma.board.create({
     data: {
@@ -44,7 +61,7 @@ const createBoard: RequestHandler = asyncHandler(async (req, res) => {
       tag: ["testing"],
       isPublic,
       isTemplate,
-      coverImage: defaultCoverImageUrl,
+      coverImage: coverImageLink?.url,
       creatorId: req.user?.id!,
     },
   });
@@ -189,10 +206,11 @@ const updateBoardCoverImage: RequestHandler = asyncHandler(async (req, res) => {
     },
   });
 
-  await fs.unlink(coverImageLocalPath, (error) => {
-    if (error) throw new ApiError(500, "error while deleting local file");
-    console.log("local file deleted successfully");
-  });
+   try{
+      await fs.unlink(coverImageLocalPath)
+    } catch (error) {
+      throw new ApiError(500, "Failed to delete cover image file from server");
+    }
 
   return res
     .status(200)
