@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import { useDnD } from '@/providers/DragAndDropContext';
 import TasklistMoreActions from './TasklistActionModal';
 import { useRef } from 'react';
+import api from "@/lib/axiosClient";
 
 export default function TaskListBoardMain() {
   const { tasklist, createTasklist } = useTasklist();
@@ -20,6 +21,8 @@ export default function TaskListBoardMain() {
     top: 0,
     left: 0,
   });
+
+  console.log('from tasklistboardMain: ', tasklist);
 
   const handleMoreActionsChange = (open: boolean) => {
     setIsTasklistModalOpen(open);
@@ -34,13 +37,16 @@ export default function TaskListBoardMain() {
     handleListDragStart,
   } = useDnD();
 
-  function addNewTasklist(e: React.FormEvent<HTMLFormElement>) {
+  async function addNewTasklist(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const title = formData.get('title');
     if (typeof title !== 'string') return;
-    createTasklist(title);
-    e.currentTarget.reset();
+    const response = await api.post(`/boards/${boardid}/tasklists`, {
+      title
+    });
+    createTasklist(response.data.data)
+    // e.currentTarget.reset();
   }
 
   function handleAddTask(e: React.FormEvent<HTMLFormElement>, taskListId: string) {
@@ -52,9 +58,7 @@ export default function TaskListBoardMain() {
     e.currentTarget.reset();
   }
 
-  const filteredLists = tasklist
-    .filter(list => list.boardId === boardid)
-    .sort((a, b) => a.position - b.position);
+  const filteredLists = [...tasklist].sort((a, b) => a.position - b.position);
 
   return (
     <div className="flex justify-start gap-3 h-full px-4 py-4 overflow-x-auto">
