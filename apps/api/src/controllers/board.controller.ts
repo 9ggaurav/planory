@@ -58,7 +58,7 @@ const createBoard: RequestHandler = asyncHandler(async (req, res) => {
   const board = await prisma.board.create({
     data: {
       title,
-      tag: ["testing"],
+      tag: [tag],
       isPublic,
       isTemplate,
       coverImage: coverImageLink?.url,

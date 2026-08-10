@@ -33,7 +33,7 @@ export default function DisplayBoardCard({
 
           {/* Tag badge */}
           <span className="absolute top-2 left-2 z-10 inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full bg-white/85 text-neutral-600 backdrop-blur-sm">
-            {tag}
+            {tag[0]}
           </span>
 
           {/* Template badge */}

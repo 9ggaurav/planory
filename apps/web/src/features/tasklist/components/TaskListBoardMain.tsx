@@ -28,7 +28,7 @@ export default function TaskListBoardMain() {
     setIsTasklistModalOpen(open);
   };
 
-  const boardid = useParams().boardid as string;
+  const boardid = Number(useParams().boardid);
   const {
     dragTaskInfo,
     handleTaskDragStart,
@@ -145,10 +145,7 @@ export default function TaskListBoardMain() {
                   draggable
                   onClick={() => {
                     setSelectedTaskId(task.id);
-                    // const rect = e.currentTarget.getBoundingClientRect();
                     setModalPosition({
-                      // top: rect.bottom + window.scrollY - 24,
-                      // left: rect.left + window.scrollX + 500,
                       top: 200,
                       left: 1000,
                     });

@@ -1,13 +1,14 @@
 import { useRef } from "react";
 import { useTasks } from "@/providers/TaskContext";
 import { useTasklist } from "@/providers/TasklistContext";
+import { Tasklist } from "@repo/shared";
 
 export function useDragAndDrop() {
     const { reorderTasksWithinList, moveTaskToList } = useTasks();
     const { reorderListsWithinBoard } = useTasklist();
 
     const dragTaskInfo = useRef<{ listId: string; index: number; taskId: string } | null>(null);
-    const dragListInfo = useRef<{ boardId: string; index: number } | null>(null);
+    const dragListInfo = useRef<{ boardId: number; index: number } | null>(null);
 
     // ── Task handlers ───────────────────────────────────────
     const handleTaskDragStart = (listId: string, index: number, taskId: string) => {
@@ -34,19 +35,25 @@ export function useDragAndDrop() {
     };
 
     // ── List column handlers (only needed in BoardMain) ─────
-    const handleListDragStart = (boardId: string, index: number) => {
+    const handleListDragStart = (boardId: number, index: number) => {
         dragListInfo.current = { boardId, index };
     };
 
-    const handleListDrop = (boardId: string, dropIndex: number) => {
-        if (!dragListInfo.current || !boardId) return;
-        if (dragListInfo.current.boardId !== boardId) return;
-        reorderListsWithinBoard(boardId, dragListInfo.current.index, dropIndex);
-        dragListInfo.current = null;
-    };
+    const handleListDrop = (boardId: number, dropIndex: number) => {
+    if (!dragListInfo.current) return;
+    if (dragListInfo.current.boardId !== boardId) return;
+
+    reorderListsWithinBoard(
+        boardId,
+        dragListInfo.current.index,
+        dropIndex
+    );
+
+    dragListInfo.current = null;
+};
 
     // ── Shared helper for list container's onDrop ───────────
-    const handleContainerDrop = (targetListId: string, boardId: string, listDropIndex: number) => {
+    const handleContainerDrop = (targetListId: string, boardId: number, listDropIndex: number) => {
         if (dragTaskInfo.current) {
             handleListContainerDrop(targetListId);
         } else {
