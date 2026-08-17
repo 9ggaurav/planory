@@ -30,9 +30,6 @@ export function TasklistProvider({ children }: { children: React.ReactNode }) {
     load();
   }, []);
 
-  //   console.log('tasklists: ', tasklist);
-
-  // const nextPosition = Math.max(...tasklist.map(t => t.position), -1) + 1;
 
   // Helper Functions
   function getNewPosition(lists: TasklistType[], destinationIndex: number) {
@@ -77,26 +74,7 @@ export function TasklistProvider({ children }: { children: React.ReactNode }) {
         .filter(list => Number(list.boardId) === boardId)
         .sort((a, b) => a.position - b.position);
 
-      console.log('boardId param:', boardId);
-      console.log('first tasklist:', prev[0]);
-      console.log(
-        'all boardIds:',
-        prev.map(l => l.boardId),
-      );
-
-      console.log({
-        sourceIndex,
-        destinationIndex,
-        boardListsLength: boardLists.length,
-        boardLists: boardLists.map(l => ({
-          id: l.id,
-          title: l.title,
-          position: l.position,
-        })),
-      });
-
       const [moved] = boardLists.splice(sourceIndex, 1);
-      console.log('moved =', moved);
 
       boardLists.splice(destinationIndex, 0, moved);
 

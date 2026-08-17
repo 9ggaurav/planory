@@ -23,7 +23,7 @@ export function TaskProvider({ children }: {children: React.ReactNode}) {
     if (!trimmed) return;
 
     setTasks(prev => {
-        const nextPosition = Math.max(...prev.map(t => t.position), -1) + 1; // ✅ inside updater
+        const nextPosition = Math.max(...prev.map(t => t.position), -1) + 1; 
         return [...prev, {
             id: crypto.randomUUID(),
             title: trimmed,

@@ -3,12 +3,31 @@ import { useState } from "react"
 import { useTasks } from "@/providers/TaskContext"
 import DisplayTaskModal from "@/features/task/components/DisplayTaskModal"
 import { useDnD } from "@/providers/DragAndDropContext"
+import { usePathname, useRouter } from "next/navigation"
 
 export default function InboxTaskCards() {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
     const [modalPosition, setModalPosition] = useState<{top: number; left: number}>({top: 0, left: 0});
     const { Tasks } = useTasks();
     const { handleTaskDragStart, handleTaskDrop } = useDnD();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    function handleTaskClick(
+        e: React.MouseEvent<HTMLDivElement>,
+        taskId: string
+    ) {
+        setSelectedTaskId(taskId);
+        const rect = e.currentTarget.getBoundingClientRect();
+        setModalPosition({
+            // top: rect.bottom + window.scrollY - 24,
+            top: 200,
+            left: rect.left + window.scrollX + 500,
+        });
+        const params = new URLSearchParams();
+        params.set("taskId", taskId);
+        router.push(`${pathname}?${params.toString()}`);
+    }
 
     const InboxOnlyTasks = Tasks.filter(
         task => task.taskListId === "inbox"
@@ -20,15 +39,7 @@ export default function InboxTaskCards() {
         <div className="w-full flex flex-col gap-1.5 px-2 overflow-y-auto">
             {InboxOnlyTasks.map((task, index) => (
                 <div
-                    onClick={(e) => {
-                        setSelectedTaskId(task.id)
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        setModalPosition({
-                            // top: rect.bottom + window.scrollY - 24,
-                            top: 200,
-                            left: rect.left + window.scrollX + 500,
-                        })
-                    }}
+                    onClick={(e) => handleTaskClick(e, task.id)}
                     id="new-inbox-task-card"
                     draggable={true}
                     key={task.id}
