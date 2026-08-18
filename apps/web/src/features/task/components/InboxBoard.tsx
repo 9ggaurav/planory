@@ -6,16 +6,17 @@ import AddNewTask from "@/features/task/components/addNewTask";
 export default function InboxBoard() {
     const {createTask} = useTasks();
 
-    function addNewTask(e: React.FormEvent<HTMLFormElement>) {
+    async function addNewTask(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
+        const form = e.currentTarget; // capture before awaiting to avoid synthetic event reuse
+        const formData = new FormData(form);
         const title = formData.get("title");
         if (typeof title !== "string"){
             return;
         }
 
-        createTask(title, 'inbox');
-        e.currentTarget.reset()
+        await createTask(title, 'inbox');
+        form.reset();
     }
 
     return (

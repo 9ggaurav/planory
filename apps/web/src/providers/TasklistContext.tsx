@@ -2,14 +2,15 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { Tasklist as TasklistType } from '@repo/shared';
 import { useParams } from 'next/navigation';
-import api from '@/lib/axiosClient';
+import api from '@/features/lib/axiosClient';
+import { useTasks } from './TaskContext';
 
 const tasklistContext = createContext<{
   tasklist: TasklistType[];
   createTasklist: (tasklist: TasklistType) => void;
   setTasklist: React.Dispatch<React.SetStateAction<TasklistType[]>>;
-  updateTasklist: (id: string, updates: Partial<TasklistType>) => void;
-  deleteTasklist: (id: string) => void;
+  updateTasklist: (id: string | number, updates: Partial<TasklistType>) => void;
+  deleteTasklist: (id: string | number) => void;
   reorderListsWithinBoard: (boardId: number, sourceIndex: number, destinationIndex: number) => void;
 } | null>(null);
 
@@ -18,9 +19,20 @@ export function TasklistProvider({ children }: { children: React.ReactNode }) {
   const bid = useParams().boardid;
   const boardid = bid ? Number(bid) : 0;
 
+  const { setTasks } = useTasks();
+
   const fetchTasklists = async () => {
     const response = await api.get(`boards/${boardid}/tasklists`);
-    setTasklist(response.data.data);
+    const lists = response.data.data;
+    setTasklist(lists);
+    
+    // Extract nested tasks from the tasklists response
+    const allTasks = lists.flatMap((list: any) => list.tasks || []);
+    setTasks(prev => {
+      // preserve any local-only inbox tasks (they use a string id 'inbox')
+      const inboxTasks = (prev as any[]).filter((t) => t.taskListId === 'inbox');
+      return [...inboxTasks, ...allTasks];
+    });
   };
 
   useEffect(() => {
@@ -55,7 +67,10 @@ export function TasklistProvider({ children }: { children: React.ReactNode }) {
     setTasklist(prev => [...prev, tasklist]);
   }
 
-  function updateTasklist(id: string, updates: Partial<TasklistType>) {
+  function updateTasklist(id: string | number, updates: Partial<TasklistType>) {
+    if (typeof id === 'number') {
+      api.patch(`/tasklists/${id}`, updates).catch(err => console.error(err));
+    }
     setTasklist(prev =>
       prev.map(task =>
         task.id === id
@@ -88,7 +103,10 @@ export function TasklistProvider({ children }: { children: React.ReactNode }) {
     });
   }
 
-  function deleteTasklist(taskId: string) {
+  function deleteTasklist(taskId: string | number) {
+    if (typeof taskId === 'number') {
+      api.delete(`/tasklists/${taskId}`).catch(err => console.error(err));
+    }
     setTasklist(prev => prev.filter(task => task.id !== taskId));
   }
 

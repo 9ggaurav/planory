@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/field';
 import { useState } from 'react';
 import { z } from 'zod';
-import api from '@/lib/axiosClient';
+import api from '@/features/lib/axiosClient';
 import axios from 'axios';
 import { useBoards } from '@/providers/BoardContext';
 

@@ -107,22 +107,14 @@ const getBoardById: RequestHandler = asyncHandler(async (req, res) => {
     include: {
       taskLists: {
         orderBy: {
-          position: "desc",
+          position: "asc",
         },
         include: {
           tasks: {
             orderBy: {
-              position: "desc",
+              position: "asc",
             },
           }
-        }
-      },
-      tasks: {
-        where: {
-          taskListId: null,
-        },
-        orderBy: {
-          position: "desc",
         }
       }
     }
@@ -282,11 +274,21 @@ const getAllTasklists: RequestHandler = asyncHandler(async (req, res) => {
     where: {
       boardId,
     },
+    include: {
+      tasks: {
+        orderBy: {
+          position: "asc",
+        },
+      }
+    },
+    orderBy: {
+      position: "asc",
+    },
   });
 
   return res
-    .status(201)
-    .json(new ApiResponse(201, tasklists, "retriving all tasklists"));
+    .status(200)
+    .json(new ApiResponse(200, tasklists, "retriving all tasklists"));
 });
 
 const createTaskList: RequestHandler = asyncHandler(async (req, res) => {
@@ -345,10 +347,6 @@ const createTaskList: RequestHandler = asyncHandler(async (req, res) => {
       ),
     );
 });
-
-const getAllTasks: RequestHandler = asyncHandler(async (req, res) => {
-
-})
 
 export {
   getAllBoardsForLoggedInUser,

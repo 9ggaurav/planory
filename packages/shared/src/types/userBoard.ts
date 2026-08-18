@@ -1,5 +1,5 @@
 export type userBoard = {
-    id?: string;
+    id?: string | number;
     coverImage: string;
     title: string;
     tag: string;

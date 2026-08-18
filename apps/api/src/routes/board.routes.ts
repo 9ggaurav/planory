@@ -26,7 +26,7 @@ router
   .route("/:boardId/coverImage")
   .patch(verifyJWT, upload.single("coverImage"), updateBoardCoverImage);
 
-router.route("/:boardId").delete(verifyJWT, deleteBoardById);
+router.route("/:boardId").delete(deleteBoardById);
 
 // Tasklist routes
 router.route("/:boardId/tasklists").get(verifyJWT, getAllTasklists);

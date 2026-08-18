@@ -2,11 +2,13 @@
 import {Group, Panel, Separator } from "react-resizable-panels";
 import InboxBoard from "@/features/task/components/InboxBoard";
 import TasklistBoard from "@/features/tasklist/components/TasklistBoard";
-
+import { useSearchParams } from "next/navigation";
+import DisplayTaskModal from "@/features/task/components/DisplayTaskModal";
 
 export default function Board() {
+    const searchParams = useSearchParams();
+    const selectedTaskId = searchParams.get('taskId');
 
-    
 
     return (
 
@@ -35,6 +37,7 @@ export default function Board() {
                     </div>
                 </Panel>
             </Group>
+            <DisplayTaskModal selectedTaskId={selectedTaskId} />
         </div>
 
     );

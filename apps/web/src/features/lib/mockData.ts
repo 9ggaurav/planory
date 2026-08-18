@@ -28,7 +28,7 @@ export const boards: userBoardType[] = [
 ];
 
 // 8 Sample Tasklists (Distributed across Board 1 and Board 2)
-export const taskLists: tasklistType[] = [
+export const taskLists: any[] = [
   { id: "inbox", title: "inbox", position: -1, description: "inbox tasks", isArchieved: false, boardId: "None", createdAt: "start", updatedAt: "start"},
   { id: "archieve", title: "archieve", position: -2, description: "archieved tasks", isArchieved: false, boardId: "None", createdAt: "start", updatedAt: "start"},
   // Board 1: Alpha
@@ -45,7 +45,7 @@ export const taskLists: tasklistType[] = [
 ];
 
 // 52 Sample Tasks (Includes 7 'inbox' tasks and distributed tasks across tl-1 through tl-8)
-export const tasks: inboxTaskType[] = [
+export const tasks: any[] = [
   // --- 7 Inbox Tasks (No explicit boardId/taskListId or explicitly set to 'inbox') ---
   { id: "t-inbox-1", position: 1, title: "Review morning intel brief", taskListId: "inbox", boardId: "1", description: "Quick scan of tactical updates", isDone: false, createdAt: "2026-06-01T08:00:00Z" },
   { id: "t-inbox-2", position: 2, title: "Draft emergency response plan", taskListId: "inbox", boardId: "1", description: "Outline steps for unexpected downtime", isDone: false, createdAt: "2026-06-01T08:30:00Z" },

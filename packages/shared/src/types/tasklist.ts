@@ -1,10 +1,10 @@
 export type Tasklist = {
-    id: string;
+    id: number;
     title: string;
     position: number;
-    description: string;
-    isArchieved: boolean;
-    boardId: string;
+    description: string | null;
+    isArchived: boolean;
+    boardId: number;
     createdAt: string;
     updatedAt: string | null;
 }

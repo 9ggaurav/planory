@@ -6,7 +6,7 @@ import axios from 'axios';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
-import api from "../../lib/axiosClient";
+import api from "../../features/lib/axiosClient";
 
 const signupSchema = z
   .object({

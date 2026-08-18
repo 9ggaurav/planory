@@ -1,12 +1,13 @@
 
 
 export type inboxTask = {
-    id: string;
+    id: number;
     position: number;
     title: string;
-    taskListId?: string;
-    boardId?:string;
+    taskListId?: number;
+    boardId?: number;
     description?: string;
     isDone: boolean;
     createdAt: string;
+    updatedAt?: string;
 }

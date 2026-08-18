@@ -5,22 +5,22 @@ import { useRef, useEffect } from "react";
 type childProp = {
     isMoreActionsOpen: boolean;
     handleMoreActionsChange: (open: boolean) => void;
-    taskId: string | null;
+    taskId: string | number | null;
 }
 
 export default function MoreActions({ isMoreActionsOpen, handleMoreActionsChange, taskId }: childProp) {
     const { deleteTask, archieveTask } = useTasks();
     const ref = useRef<HTMLDivElement>(null);
 
-    const handleArchieve = (id: string | null) => {
+    const handleArchieve = async (id: string | number | null) => {
         if (!id) return;
-        archieveTask(id);
+        await archieveTask(id as number | string);
         handleMoreActionsChange(false);
     }
 
-    const handleDelete = (id: string | null) => {
+    const handleDelete = async (id: string | number | null) => {
         if (!id) return;
-        deleteTask(id);
+        await deleteTask(id as number | string);
         handleMoreActionsChange(false);
     }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api from '@/lib/axiosClient';
+import api from '@/features/lib/axiosClient';
 
 export type User = {
   id: number;

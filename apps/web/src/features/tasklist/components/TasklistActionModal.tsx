@@ -6,7 +6,7 @@ import { useRef, useEffect } from 'react';
 type childProp = {
   isMoreActionsOpen: boolean;
   handleMoreActionChange: (open: boolean) => void;
-  listId: string | null;
+  listId: string | number | null;
   setIsTasklistModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   position: { top: number; left: number };
 };
@@ -22,8 +22,8 @@ export default function TasklistMoreActions({
   const { deleteTasklist } = useTasklist();
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleDeleteListCascade = (listId: string) => {
-    if (typeof listId !== 'string') return;
+  const handleDeleteListCascade = (listId: string | number) => {
+    if (!listId) return;
     deleteTasklist(listId);
     deleteTasksByTasklistId(listId);
     setIsTasklistModalOpen(false);

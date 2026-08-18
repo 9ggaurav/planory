@@ -4,7 +4,6 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/ApiError";
 import { prisma } from "../lib/prisma";
 import { ApiResponse } from "../utils/ApiResponse";
-import fs from "fs";
 import type { Prisma } from '../generated/prisma/browser';
 
 const getTaskListById: RequestHandler = asyncHandler(async (req, res) => {
@@ -201,6 +200,8 @@ const createTask: RequestHandler = asyncHandler(async (req, res) => {
     },
   });
 
+  console.log("Created task:", createdTask);
+
   return res
     .status(201)
     .json(
@@ -219,7 +220,7 @@ const getAllTasks: RequestHandler = asyncHandler(async (req, res) => {
     },
   });
   if (!taskList) {
-     new ApiError(400, "Task list not found");
+    throw new ApiError(404, "Task list not found");
   }
 
   const tasks = await prisma.task.findMany({
@@ -229,8 +230,8 @@ const getAllTasks: RequestHandler = asyncHandler(async (req, res) => {
   });
 
   return res
-    .status(201)
-    .json(new ApiResponse(201, tasks, "retriving all tasks"));
+    .status(200)
+    .json(new ApiResponse(200, tasks, "retriving all tasks"));
 });
 
 export {

@@ -1,5 +1,5 @@
 "use client";
-import api from "@/lib/axiosClient"
+import api from "@/features/lib/axiosClient"
 import { useAuth } from "@/providers/AuthProvider";
 import Image from "next/image";
 

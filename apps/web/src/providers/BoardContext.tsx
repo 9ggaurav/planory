@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { userBoard as BoardType } from '@repo/shared';
-import api from '@/lib/axiosClient';
+import api from '@/features/lib/axiosClient';
 
 const BoardContext = createContext<{
   boards: BoardType[];

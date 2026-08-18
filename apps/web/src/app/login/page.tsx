@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import { useSearchParams } from 'next/navigation';
-import api from "../../lib/axiosClient";
+import api from "../../features/lib/axiosClient";
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),

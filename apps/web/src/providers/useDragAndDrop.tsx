@@ -7,27 +7,27 @@ export function useDragAndDrop() {
     const { reorderTasksWithinList, moveTaskToList } = useTasks();
     const { reorderListsWithinBoard } = useTasklist();
 
-    const dragTaskInfo = useRef<{ listId: string; index: number; taskId: string } | null>(null);
+    const dragTaskInfo = useRef<{ listId: string | number; index: number; taskId: string | number } | null>(null);
     const dragListInfo = useRef<{ boardId: number; index: number } | null>(null);
 
     // ── Task handlers ───────────────────────────────────────
-    const handleTaskDragStart = (listId: string, index: number, taskId: string) => {
+    const handleTaskDragStart = (listId: string | number, index: number, taskId: string | number) => {
         dragTaskInfo.current = { listId, index, taskId };
     };
 
-    const handleTaskDrop = (targetListId: string, dropIndex: number) => {
+    const handleTaskDrop = (targetListId: string | number, dropIndex: number) => {
         if (!dragTaskInfo.current) return;
         const { listId: sourceListId, index: sourceIndex, taskId } = dragTaskInfo.current;
 
         if (sourceListId === targetListId) {
             reorderTasksWithinList(targetListId, sourceIndex, dropIndex);
         } else {
-            moveTaskToList(taskId, targetListId);
+            moveTaskToList(taskId, targetListId, dropIndex);
         }
         dragTaskInfo.current = null;
     };
 
-    const handleListContainerDrop = (targetListId: string) => {
+    const handleListContainerDrop = (targetListId: string | number) => {
         if (!dragTaskInfo.current) return;
         if (dragTaskInfo.current.listId === targetListId) return;
         moveTaskToList(dragTaskInfo.current.taskId, targetListId);
@@ -53,7 +53,7 @@ export function useDragAndDrop() {
 };
 
     // ── Shared helper for list container's onDrop ───────────
-    const handleContainerDrop = (targetListId: string, boardId: number, listDropIndex: number) => {
+    const handleContainerDrop = (targetListId: string | number, boardId: number, listDropIndex: number) => {
         if (dragTaskInfo.current) {
             handleListContainerDrop(targetListId);
         } else {
@@ -66,6 +66,7 @@ export function useDragAndDrop() {
         handleTaskDragStart,
         handleTaskDrop,
         handleContainerDrop,
+        handleListContainerDrop,
         handleListDragStart,
     };
 }

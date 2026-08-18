@@ -8,21 +8,25 @@ import { useParams } from 'next/navigation';
 import { useDnD } from '@/providers/DragAndDropContext';
 import TasklistMoreActions from './TasklistActionModal';
 import { useRef } from 'react';
-import api from "@/lib/axiosClient";
+import api from '@/features/lib/axiosClient';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function TaskListBoardMain() {
   const { tasklist, createTasklist } = useTasklist();
   const { createTask, Tasks } = useTasks();
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  // const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isTasklistModalOpen, setIsTasklistModalOpen] = useState<boolean>(false);
-  const [selectedListId, setSelectedListId] = useState<string | null>(null);
-  const listMenuRef = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const [selectedListId, setSelectedListId] = useState<string | number | null>(null);
+  const listMenuRef = useRef<Map<string | number, HTMLButtonElement>>(new Map());
   const [modalPosition, setModalPosition] = useState<{ top: number; left: number }>({
     top: 0,
     left: 0,
   });
 
-  console.log('from tasklistboardMain: ', tasklist);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // const selectedTaskId = searchParams.get('taskId');
 
   const handleMoreActionsChange = (open: boolean) => {
     setIsTasklistModalOpen(open);
@@ -43,19 +47,20 @@ export default function TaskListBoardMain() {
     const title = formData.get('title');
     if (typeof title !== 'string') return;
     const response = await api.post(`/boards/${boardid}/tasklists`, {
-      title
+      title,
     });
-    createTasklist(response.data.data)
+    createTasklist(response.data.data);
     // e.currentTarget.reset();
   }
 
-  function handleAddTask(e: React.FormEvent<HTMLFormElement>, taskListId: string) {
+  async function handleAddTask(e: React.FormEvent<HTMLFormElement>, taskListId: string | number) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget; // capture to avoid synthetic event reuse
+    const formData = new FormData(form);
     const title = formData.get('title');
     if (typeof title !== 'string') return;
-    createTask(title, taskListId);
-    e.currentTarget.reset();
+    await createTask(title, taskListId);
+    form.reset();
   }
 
   const filteredLists = [...tasklist].sort((a, b) => a.position - b.position);
@@ -144,7 +149,10 @@ export default function TaskListBoardMain() {
                   key={task.id}
                   draggable
                   onClick={() => {
-                    setSelectedTaskId(task.id);
+                    // setSelectedTaskId(task.id);
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set('taskId', task.id.toString());
+                    router.push(`${pathname}?${params.toString()}`);
                     setModalPosition({
                       top: 200,
                       left: 1000,
@@ -214,11 +222,10 @@ export default function TaskListBoardMain() {
         );
       })}
 
-      <DisplayTaskModal
-        selectedTaskId={selectedTaskId}
-        setSelectedTaskId={setSelectedTaskId}
-        position={modalPosition}
-      />
+      {/* <DisplayTaskModal 
+        selectedTaskId={selectedTaskId} 
+        // position={modalPosition} 
+        /> */}
 
       {/* Add new list column */}
       <div className="shrink-0 w-68">
