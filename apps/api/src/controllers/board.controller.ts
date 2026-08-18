@@ -104,6 +104,28 @@ const getBoardById: RequestHandler = asyncHandler(async (req, res) => {
     where: {
       id: Number(boardId),
     },
+    include: {
+      taskLists: {
+        orderBy: {
+          position: "desc",
+        },
+        include: {
+          tasks: {
+            orderBy: {
+              position: "desc",
+            },
+          }
+        }
+      },
+      tasks: {
+        where: {
+          taskListId: null,
+        },
+        orderBy: {
+          position: "desc",
+        }
+      }
+    }
   });
 
   if (!board) {
@@ -323,6 +345,10 @@ const createTaskList: RequestHandler = asyncHandler(async (req, res) => {
       ),
     );
 });
+
+const getAllTasks: RequestHandler = asyncHandler(async (req, res) => {
+
+})
 
 export {
   getAllBoardsForLoggedInUser,
