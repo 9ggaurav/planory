@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { verifyJWT } from "../middleware/auth.middleware";
-import { getOrCreateInboxTasklist } from "../controllers/inbox.controller";
+import { getInboxTasks, createInboxTask } from "../controllers/inbox.controller";
 
 const router: Router = Router();
 
-router.route("/tasklist").get(verifyJWT, getOrCreateInboxTasklist);
+router.route("/tasks").get(verifyJWT, getInboxTasks);
+router.route("/tasks").post(verifyJWT, createInboxTask);
 
 export default router;
