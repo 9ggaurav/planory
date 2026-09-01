@@ -226,6 +226,7 @@ export type UserWhereInput = {
   refreshToken?: Prisma.StringNullableFilter<"User"> | string | null
   boardsCreated?: Prisma.BoardListRelationFilter
   boardsJoined?: Prisma.BoardListRelationFilter
+  tasks?: Prisma.TaskListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -237,6 +238,7 @@ export type UserOrderByWithRelationInput = {
   refreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
   boardsCreated?: Prisma.BoardOrderByRelationAggregateInput
   boardsJoined?: Prisma.BoardOrderByRelationAggregateInput
+  tasks?: Prisma.TaskOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -251,6 +253,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   refreshToken?: Prisma.StringNullableFilter<"User"> | string | null
   boardsCreated?: Prisma.BoardListRelationFilter
   boardsJoined?: Prisma.BoardListRelationFilter
+  tasks?: Prisma.TaskListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -287,6 +290,7 @@ export type UserCreateInput = {
   refreshToken?: string | null
   boardsCreated?: Prisma.BoardCreateNestedManyWithoutCreatorInput
   boardsJoined?: Prisma.BoardCreateNestedManyWithoutMembersInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -298,6 +302,7 @@ export type UserUncheckedCreateInput = {
   refreshToken?: string | null
   boardsCreated?: Prisma.BoardUncheckedCreateNestedManyWithoutCreatorInput
   boardsJoined?: Prisma.BoardUncheckedCreateNestedManyWithoutMembersInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -308,6 +313,7 @@ export type UserUpdateInput = {
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   boardsCreated?: Prisma.BoardUpdateManyWithoutCreatorNestedInput
   boardsJoined?: Prisma.BoardUpdateManyWithoutMembersNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -319,6 +325,7 @@ export type UserUncheckedUpdateInput = {
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   boardsCreated?: Prisma.BoardUncheckedUpdateManyWithoutCreatorNestedInput
   boardsJoined?: Prisma.BoardUncheckedUpdateManyWithoutMembersNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -397,6 +404,11 @@ export type UserOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -465,6 +477,22 @@ export type UserUncheckedUpdateManyWithoutBoardsJoinedNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateNestedOneWithoutTasksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTasksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutTasksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTasksInput
+  upsert?: Prisma.UserUpsertWithoutTasksInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTasksInput, Prisma.UserUpdateWithoutTasksInput>, Prisma.UserUncheckedUpdateWithoutTasksInput>
+}
+
 export type UserCreateWithoutBoardsCreatedInput = {
   email: string
   name?: string | null
@@ -472,6 +500,7 @@ export type UserCreateWithoutBoardsCreatedInput = {
   hashedPassword?: string | null
   refreshToken?: string | null
   boardsJoined?: Prisma.BoardCreateNestedManyWithoutMembersInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBoardsCreatedInput = {
@@ -482,6 +511,7 @@ export type UserUncheckedCreateWithoutBoardsCreatedInput = {
   hashedPassword?: string | null
   refreshToken?: string | null
   boardsJoined?: Prisma.BoardUncheckedCreateNestedManyWithoutMembersInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBoardsCreatedInput = {
@@ -496,6 +526,7 @@ export type UserCreateWithoutBoardsJoinedInput = {
   hashedPassword?: string | null
   refreshToken?: string | null
   boardsCreated?: Prisma.BoardCreateNestedManyWithoutCreatorInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBoardsJoinedInput = {
@@ -506,6 +537,7 @@ export type UserUncheckedCreateWithoutBoardsJoinedInput = {
   hashedPassword?: string | null
   refreshToken?: string | null
   boardsCreated?: Prisma.BoardUncheckedCreateNestedManyWithoutCreatorInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBoardsJoinedInput = {
@@ -531,6 +563,7 @@ export type UserUpdateWithoutBoardsCreatedInput = {
   hashedPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   boardsJoined?: Prisma.BoardUpdateManyWithoutMembersNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBoardsCreatedInput = {
@@ -541,6 +574,7 @@ export type UserUncheckedUpdateWithoutBoardsCreatedInput = {
   hashedPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   boardsJoined?: Prisma.BoardUncheckedUpdateManyWithoutMembersNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutBoardsJoinedInput = {
@@ -571,6 +605,64 @@ export type UserScalarWhereInput = {
   refreshToken?: Prisma.StringNullableFilter<"User"> | string | null
 }
 
+export type UserCreateWithoutTasksInput = {
+  email: string
+  name?: string | null
+  avatar?: string | null
+  hashedPassword?: string | null
+  refreshToken?: string | null
+  boardsCreated?: Prisma.BoardCreateNestedManyWithoutCreatorInput
+  boardsJoined?: Prisma.BoardCreateNestedManyWithoutMembersInput
+}
+
+export type UserUncheckedCreateWithoutTasksInput = {
+  id?: number
+  email: string
+  name?: string | null
+  avatar?: string | null
+  hashedPassword?: string | null
+  refreshToken?: string | null
+  boardsCreated?: Prisma.BoardUncheckedCreateNestedManyWithoutCreatorInput
+  boardsJoined?: Prisma.BoardUncheckedCreateNestedManyWithoutMembersInput
+}
+
+export type UserCreateOrConnectWithoutTasksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+}
+
+export type UserUpsertWithoutTasksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTasksInput, Prisma.UserUncheckedUpdateWithoutTasksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTasksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTasksInput, Prisma.UserUncheckedUpdateWithoutTasksInput>
+}
+
+export type UserUpdateWithoutTasksInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hashedPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  boardsCreated?: Prisma.BoardUpdateManyWithoutCreatorNestedInput
+  boardsJoined?: Prisma.BoardUpdateManyWithoutMembersNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTasksInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hashedPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  boardsCreated?: Prisma.BoardUncheckedUpdateManyWithoutCreatorNestedInput
+  boardsJoined?: Prisma.BoardUncheckedUpdateManyWithoutMembersNestedInput
+}
+
 export type UserUpdateWithoutBoardsJoinedInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -578,6 +670,7 @@ export type UserUpdateWithoutBoardsJoinedInput = {
   hashedPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   boardsCreated?: Prisma.BoardUpdateManyWithoutCreatorNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBoardsJoinedInput = {
@@ -588,6 +681,7 @@ export type UserUncheckedUpdateWithoutBoardsJoinedInput = {
   hashedPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   boardsCreated?: Prisma.BoardUncheckedUpdateManyWithoutCreatorNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutBoardsJoinedInput = {
@@ -607,11 +701,13 @@ export type UserUncheckedUpdateManyWithoutBoardsJoinedInput = {
 export type UserCountOutputType = {
   boardsCreated: number
   boardsJoined: number
+  tasks: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   boardsCreated?: boolean | UserCountOutputTypeCountBoardsCreatedArgs
   boardsJoined?: boolean | UserCountOutputTypeCountBoardsJoinedArgs
+  tasks?: boolean | UserCountOutputTypeCountTasksArgs
 }
 
 /**
@@ -638,6 +734,13 @@ export type UserCountOutputTypeCountBoardsJoinedArgs<ExtArgs extends runtime.Typ
   where?: Prisma.BoardWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -648,6 +751,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   refreshToken?: boolean
   boardsCreated?: boolean | Prisma.User$boardsCreatedArgs<ExtArgs>
   boardsJoined?: boolean | Prisma.User$boardsJoinedArgs<ExtArgs>
+  tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -682,6 +786,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   boardsCreated?: boolean | Prisma.User$boardsCreatedArgs<ExtArgs>
   boardsJoined?: boolean | Prisma.User$boardsJoinedArgs<ExtArgs>
+  tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -692,6 +797,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     boardsCreated: Prisma.$BoardPayload<ExtArgs>[]
     boardsJoined: Prisma.$BoardPayload<ExtArgs>[]
+    tasks: Prisma.$TaskPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1096,6 +1202,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   boardsCreated<T extends Prisma.User$boardsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$boardsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BoardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   boardsJoined<T extends Prisma.User$boardsJoinedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$boardsJoinedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BoardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tasks<T extends Prisma.User$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1569,6 +1676,30 @@ export type User$boardsJoinedArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.BoardScalarFieldEnum | Prisma.BoardScalarFieldEnum[]
+}
+
+/**
+ * User.tasks
+ */
+export type User$tasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Task
+   */
+  select?: Prisma.TaskSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Task
+   */
+  omit?: Prisma.TaskOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskInclude<ExtArgs> | null
+  where?: Prisma.TaskWhereInput
+  orderBy?: Prisma.TaskOrderByWithRelationInput | Prisma.TaskOrderByWithRelationInput[]
+  cursor?: Prisma.TaskWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskScalarFieldEnum | Prisma.TaskScalarFieldEnum[]
 }
 
 /**

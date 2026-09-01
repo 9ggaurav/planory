@@ -443,9 +443,9 @@ export type TaskListSumOrderByAggregateInput = {
   boardId?: Prisma.SortOrder
 }
 
-export type TaskListScalarRelationFilter = {
-  is?: Prisma.TaskListWhereInput
-  isNot?: Prisma.TaskListWhereInput
+export type TaskListNullableScalarRelationFilter = {
+  is?: Prisma.TaskListWhereInput | null
+  isNot?: Prisma.TaskListWhereInput | null
 }
 
 export type TaskListCreateNestedManyWithoutBoardInput = {
@@ -504,10 +504,12 @@ export type TaskListCreateNestedOneWithoutTasksInput = {
   connect?: Prisma.TaskListWhereUniqueInput
 }
 
-export type TaskListUpdateOneRequiredWithoutTasksNestedInput = {
+export type TaskListUpdateOneWithoutTasksNestedInput = {
   create?: Prisma.XOR<Prisma.TaskListCreateWithoutTasksInput, Prisma.TaskListUncheckedCreateWithoutTasksInput>
   connectOrCreate?: Prisma.TaskListCreateOrConnectWithoutTasksInput
   upsert?: Prisma.TaskListUpsertWithoutTasksInput
+  disconnect?: Prisma.TaskListWhereInput | boolean
+  delete?: Prisma.TaskListWhereInput | boolean
   connect?: Prisma.TaskListWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.TaskListUpdateToOneWithWhereWithoutTasksInput, Prisma.TaskListUpdateWithoutTasksInput>, Prisma.TaskListUncheckedUpdateWithoutTasksInput>
 }
