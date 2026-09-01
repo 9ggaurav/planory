@@ -29,8 +29,12 @@ export function useDragAndDrop() {
 
     const handleListContainerDrop = (targetListId: string | number) => {
         if (!dragTaskInfo.current) return;
-        if (dragTaskInfo.current.listId === targetListId) return;
-        moveTaskToList(dragTaskInfo.current.taskId, targetListId);
+        const { listId: sourceListId, index: sourceIndex, taskId } = dragTaskInfo.current;
+        if (sourceListId === targetListId) {
+            reorderTasksWithinList(targetListId, sourceIndex, 999999);
+        } else {
+            moveTaskToList(taskId, targetListId);
+        }
         dragTaskInfo.current = null;
     };
 
@@ -40,23 +44,23 @@ export function useDragAndDrop() {
     };
 
     const handleListDrop = (boardId: number, dropIndex: number) => {
-    if (!dragListInfo.current) return;
-    if (dragListInfo.current.boardId !== boardId) return;
+        if (!dragListInfo.current) return;
+        if (dragListInfo.current.boardId !== boardId) return;
 
-    reorderListsWithinBoard(
-        boardId,
-        dragListInfo.current.index,
-        dropIndex
-    );
+        reorderListsWithinBoard(
+            boardId,
+            dragListInfo.current.index,
+            dropIndex
+        );
 
-    dragListInfo.current = null;
-};
+        dragListInfo.current = null;
+    };
 
     // ── Shared helper for list container's onDrop ───────────
     const handleContainerDrop = (targetListId: string | number, boardId: number, listDropIndex: number) => {
         if (dragTaskInfo.current) {
             handleListContainerDrop(targetListId);
-        } else {
+        } else if (dragListInfo.current) {
             handleListDrop(boardId, listDropIndex);
         }
     };

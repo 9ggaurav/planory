@@ -1,3 +1,6 @@
+// The Pop to create a new board, with a form to input the board details and an option to upload a cover image.
+// Issue: after creating a new board, the board list does not update automatically and the modal does not close.
+
 'use client';
 import {
   Popover,

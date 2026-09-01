@@ -5,6 +5,7 @@ import { prisma } from "../lib/prisma";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { ApiResponse } from "../utils/ApiResponse";
 import fs from "fs/promises";
+import { migrateLegacyInboxBoards } from "../lib/legacyInbox";
 
 // get boards for logged in user only
 const getAllBoardsForLoggedInUser: RequestHandler = asyncHandler(
@@ -16,9 +17,14 @@ const getAllBoardsForLoggedInUser: RequestHandler = asyncHandler(
       throw new ApiError(400, "Invalid user id");
     }
 
+    await migrateLegacyInboxBoards(userId);
+
     const boards = await prisma.board.findMany({
       where: {
         creatorId: userId,
+        NOT: {
+          AND: [{ title: "Inbox" }, { tag: { has: "inbox" } }],
+        },
       },
     });
 
@@ -136,9 +142,14 @@ const userBoards: RequestHandler = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Unauthorized request: User not authenticated");
   }
 
+  await migrateLegacyInboxBoards(userId);
+
   const boards = await prisma.board.findMany({
     where: {
       creatorId: userId,
+      NOT: {
+        AND: [{ title: "Inbox" }, { tag: { has: "inbox" } }],
+      },
     },
     select: {
       id: true,

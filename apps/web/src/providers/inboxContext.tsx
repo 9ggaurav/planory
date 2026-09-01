@@ -4,6 +4,11 @@ import api from '@/features/lib/axiosClient';
 import { useTasks } from './TaskContext';
 import type { inboxTask as SharedInboxTask } from '@repo/shared';
 
+type LocalInboxTask = Omit<SharedInboxTask, 'taskListId' | 'id'> & {
+  taskListId?: number | 'inbox';
+  id: number | string;
+};
+
 const InboxContext = createContext<{
   inboxTasklistId: number | null;
 } | null>(null);
@@ -15,11 +20,7 @@ export function InboxProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function loadInbox() {
       try {
-        const tlResp = await api.get('/inbox/tasklist');
-        const inboxList = tlResp.data.data;
-        setInboxTasklistId(inboxList.id);
-
-        const tasksResp = await api.get(`/tasklists/${inboxList.id}/tasks`);
+        const tasksResp = await api.get(`/inbox/tasks`);
         const inboxTasks: SharedInboxTask[] = tasksResp.data.data;
 
         setTasks(prev => {
@@ -27,13 +28,20 @@ export function InboxProvider({ children }: { children: React.ReactNode }) {
           // through with the real numeric id) before merging the fresh set,
           // so we don't end up with duplicates.
           const withoutInbox = prev.filter(
-            t => t.taskListId !== 'inbox' && t.taskListId !== inboxList.id,
+            t => t.taskListId !== 'inbox' && t.taskListId !== null,
           );
           const normalized = inboxTasks.map(t => ({ ...t, taskListId: 'inbox' as const }));
-          return [...withoutInbox, ...normalized];
+          // Keep any local inbox tasks that the fresh server snapshot doesn't
+          // know about yet (e.g. one created right before this fetch resolved),
+          // otherwise a stale snapshot silently deletes a just-added task.
+          const serverIds = new Set<number | string>(normalized.map(t => t.id));
+          const preservedLocal = prev.filter(
+            t => t.taskListId === 'inbox' && !serverIds.has(t.id),
+          );
+          return [...withoutInbox, ...normalized, ...preservedLocal];
         });
       } catch (err) {
-        console.error('InboxProvider: failed to load inbox tasklist', err);
+        console.error('InboxProvider: failed to load inbox tasks', err);
       }
     }
     loadInbox();

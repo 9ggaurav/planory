@@ -35,10 +35,10 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
 
   function getNewPosition(sortedTasks: LocalInboxTask[], destinationIndex: number) {
     const prev = sortedTasks[destinationIndex - 1];
-    const next = sortedTasks[destinationIndex];
+    const next = sortedTasks[destinationIndex + 1];
 
     if (!prev && !next) return 1000;
-    if (!prev) return next.position / 2;
+    if (!prev) return next.position > 0 ? next.position / 2 : next.position - 1000;
     if (!next) return prev.position + 1000;
     return (prev.position + next.position) / 2;
   }
@@ -47,12 +47,10 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     const trimmed = title.trim();
     if (!trimmed) return;
 
-    // Persist inbox tasks on the server: fetch/create inbox tasklist then create task there
+    // Persist inbox tasks on the server
     if (taskListId === 'inbox') {
       try {
-        const tlResp = await api.get(`/inbox/tasklist`);
-        const inboxList = tlResp.data.data;
-        const resp = await api.post(`/tasklists/${inboxList.id}/tasks`, { title: trimmed });
+        const resp = await api.post(`/inbox/tasks`, { title: trimmed });
         const created: SharedInboxTask = resp.data.data;
         setTasks(prev => [
           ...prev,
@@ -80,7 +78,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       try {
         const resp = await api.patch(`/tasks/${id}`, updates);
         const updated = resp.data.data;
-        setTasks(prev => prev.map(t => (t.id === id ? updated : t)));
+        setTasks(prev => prev.map(t => (t.id === id ? { ...updated, taskListId: t.taskListId === 'inbox' ? 'inbox' : updated.taskListId } as unknown as LocalInboxTask : t)));
         return;
       } catch (err) {
         console.error('updateTask error', err);
@@ -110,7 +108,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     destinationIndex: number,
   ) {
     // compute new position among tasks in that list
-    const listTasks = Tasks.filter(t => t.taskListId === taskListId).sort(
+    const listTasks = Tasks.filter(t => (taskListId === 'inbox' ? t.taskListId === 'inbox' : Number(t.taskListId) === Number(taskListId))).sort(
       (a, b) => a.position - b.position,
     );
     const moved = listTasks[sourceIndex];
@@ -118,15 +116,16 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
 
     const reordered = [...listTasks];
     reordered.splice(sourceIndex, 1);
-    reordered.splice(destinationIndex, 0, moved);
+    const clampedDest = Math.max(0, Math.min(destinationIndex, reordered.length));
+    reordered.splice(clampedDest, 0, moved);
 
-    const newPosition = getNewPosition(reordered, destinationIndex);
+    const newPosition = getNewPosition(reordered, clampedDest);
 
-    if (taskListId !== 'inbox' && typeof moved.id === 'number') {
+    if (typeof moved.id === 'number') {
       try {
         const resp = await api.patch(`/tasks/${moved.id}/move`, { position: newPosition });
         const updated: SharedInboxTask = resp.data.data;
-        setTasks(prev => prev.map(t => (t.id === moved.id ? updated : t)));
+        setTasks(prev => prev.map(t => (t.id === moved.id ? { ...updated, taskListId: taskListId === 'inbox' ? 'inbox' : (updated.taskListId ?? Number(taskListId)) } as unknown as LocalInboxTask : t)));
         return;
       } catch (err) {
         console.error('reorderTasksWithinList error', err);
@@ -134,7 +133,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // local-only update for inbox or non-numeric ids
+    // local-only update for non-numeric ids
     setTasks(prev => prev.map(t => (t.id === moved.id ? { ...t, position: newPosition } : t)));
   }
 
@@ -146,79 +145,35 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     const task = Tasks.find(t => t.id === taskId);
     if (!task) return;
 
-    const targetTasks = Tasks.filter(t => t.taskListId === targetListId).sort(
-      (a, b) => a.position - b.position,
-    );
-    const dropIndex = destinationIndex !== undefined ? destinationIndex : targetTasks.length;
+    const targetTasks = Tasks.filter(t =>
+      t.id !== taskId && (targetListId === 'inbox' ? t.taskListId === 'inbox' : Number(t.taskListId) === Number(targetListId))
+    ).sort((a, b) => a.position - b.position);
+
+    const dropIndex = destinationIndex !== undefined ? Math.max(0, Math.min(destinationIndex, targetTasks.length)) : targetTasks.length;
     const withInserted = [...targetTasks];
     withInserted.splice(dropIndex, 0, task);
 
     const newPosition = getNewPosition(withInserted, dropIndex);
 
     // Moving a task that already exists in the DB
-    if (targetListId !== 'inbox' && typeof taskId === 'number') {
-      try {
-        const resp = await api.patch(`/tasks/${taskId}/move`, {
-          position: newPosition,
-          tasklistId: targetListId,
-        });
-        const updated: SharedInboxTask = resp.data.data;
-        setTasks(prev => prev.map(t => (t.id === taskId ? updated : t)));
-        return;
-      } catch (err) {
-        console.error('moveTaskToList error', err);
-        throw err;
-      }
-    }
-
-    // If task exists in DB (numeric id)
     if (typeof taskId === 'number') {
-      // moving into inbox: move into the user's inbox tasklist
-      // if (targetListId === 'inbox') {
-      //   try {
-      //     const tlResp = await api.get(`/inbox/tasklist`);
-      //     const inboxList = tlResp.data.data;
-      //     const resp = await api.patch(`/tasks/${taskId}/move`, {
-      //       position: newPosition,
-      //       tasklistId: inboxList.id,
-      //     });
-      //     const updated: SharedInboxTask = resp.data.data;
-      //     setTasks(
-      //       prev => prev.map(t => (t.id === taskId ? { ...updated, taskListId: 'inbox' } : t)), // ← normalize
-      //     );
-      //     return;
-      //   } catch (err) {
-      //     console.error('moveTaskToList -> inbox error', err);
-      //     throw err;
-      //   }
-      // }
-      if (targetListId === 'inbox') {
-        try {
-          const tlResp = await api.get(`/inbox/tasklist`);
-          const inboxList = tlResp.data.data;
-          const resp = await api.patch(`/tasks/${taskId}/move`, {
-            position: newPosition,
-            tasklistId: inboxList.id,
-          });
-          const updated: SharedInboxTask = resp.data.data;
-          setTasks(prev =>
-            prev.map(t => (t.id === taskId ? { ...updated, taskListId: 'inbox' } : t)),
-          );
-          return;
-        } catch (err) {
-          console.error('moveTaskToList -> inbox error', err);
-          throw err;
-        }
-      }
-
-      // moving between DB lists
       try {
-        const resp = await api.patch(`/tasks/${taskId}/move`, {
-          position: newPosition,
-          tasklistId: targetListId,
-        });
+        const payload: any = { position: newPosition };
+        if (targetListId === 'inbox') {
+          payload.tasklistId = null;
+        } else {
+          payload.tasklistId = Number(targetListId);
+        }
+
+        const resp = await api.patch(`/tasks/${taskId}/move`, payload);
         const updated: SharedInboxTask = resp.data.data;
-        setTasks(prev => prev.map(t => (t.id === taskId ? updated : t)));
+        setTasks(prev =>
+          prev.map(t =>
+            t.id === taskId
+              ? ({ ...updated, taskListId: targetListId === 'inbox' ? 'inbox' : (updated.taskListId ?? Number(targetListId)) } as unknown as LocalInboxTask)
+              : t
+          )
+        );
         return;
       } catch (err) {
         console.error('moveTaskToList error', err);
@@ -227,18 +182,22 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     }
 
     // If task is non-numeric (fallback), create in the target list
-    if (typeof taskId !== 'number' && typeof targetListId === 'number') {
+    if (typeof taskId !== 'number') {
       try {
-        const createResp = await api.post(`/tasklists/${targetListId}/tasks`, {
-          title: task.title,
-        });
+        let createResp;
+        if (targetListId === 'inbox') {
+          createResp = await api.post(`/inbox/tasks`, { title: task.title });
+        } else {
+          createResp = await api.post(`/tasklists/${targetListId}/tasks`, { title: task.title });
+        }
+        
         const created: SharedInboxTask = createResp.data.data;
         if (dropIndex < targetTasks.length) {
           await api.patch(`/tasks/${created.id}/move`, { position: newPosition });
           created.position = newPosition;
         }
         setTasks(prev =>
-          prev.map(t => (t.id === taskId ? (created as unknown as LocalInboxTask) : t)),
+          prev.map(t => (t.id === taskId ? ({ ...created, taskListId: targetListId === 'inbox' ? 'inbox' : created.taskListId } as unknown as LocalInboxTask) : t)),
         );
         return;
       } catch (err) {
@@ -250,7 +209,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     // Fallback: update local state
     setTasks(prev =>
       prev.map(t =>
-        t.id === taskId ? { ...t, taskListId: targetListId as number, position: newPosition } : t,
+        t.id === taskId ? { ...t, taskListId: targetListId as number | 'inbox', position: newPosition } : t,
       ),
     );
   }

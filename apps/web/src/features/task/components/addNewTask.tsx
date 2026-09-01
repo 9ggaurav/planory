@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 
 
 type childProps = {
-  addNewTask: (e: React.FormEvent<HTMLFormElement>) => void;
+  addNewTask: (e: React.FormEvent<HTMLFormElement>) => void | Promise<void>;
   children: React.ReactNode;
   className?: string;
 };
@@ -21,6 +21,16 @@ export default function AddNewTask({ addNewTask, children }: childProps) {
 
   function handleClick() {
     setIsAddNewTaskDisplayed(!isAddNewTaskDisplayed);
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    try {
+      await addNewTask(e);
+      setIsAddNewTaskDisplayed(false);
+    } catch (err) {
+      console.error('AddNewTask: failed to create task', err);
+    }
   }
 
   return (
@@ -49,12 +59,7 @@ export default function AddNewTask({ addNewTask, children }: childProps) {
         </button>
       ) : (
         <div className="bg-white border border-neutral-200 rounded-xl p-2.5 shadow-sm">
-          <form
-            onSubmit={e => {
-              addNewTask(e);
-              setIsAddNewTaskDisplayed(false);
-            }}
-          >
+          <form onSubmit={handleSubmit}>
             <Input
               autoComplete="off"
               placeholder="Task name..."

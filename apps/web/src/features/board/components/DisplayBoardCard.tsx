@@ -1,3 +1,5 @@
+// A component to create board out of details we have about it.
+
 import { Card } from "@/components/ui/card"
 import Image from "next/image";
 import Link from "next/link";

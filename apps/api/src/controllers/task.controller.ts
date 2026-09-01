@@ -3,7 +3,6 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/ApiError";
 import { prisma } from "../lib/prisma";
 import { ApiResponse } from "../utils/ApiResponse";
-import type { Prisma } from "../generated/prisma/client";
 
 const editTask: RequestHandler = asyncHandler(async (req, res) => {
   const taskId = Number(req.params.taskId);
@@ -115,26 +114,36 @@ const moveTasks: RequestHandler = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Task not found");
   }
 
-  const updateData: Prisma.TaskUpdateInput = { position };
+  const userId = req.user?.id as number;
+  if (!userId || Number.isNaN(userId)) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  // Inbox tasks: userId set, taskListId null. Board tasks: taskListId set, userId null.
+  const updateData: {
+    position: number;
+    taskListId?: number | null;
+    userId?: number | null;
+  } = { position };
 
   if (tasklistId === null) {
-    // Moving into the inbox: detach from tasklist, attach directly to user
-    updateData.taskList = { disconnect: true };
-    updateData.user = { connect: { id: req.user!.id as number } };
+    updateData.taskListId = null;
+    updateData.userId = userId;
   } else if (tasklistId !== undefined) {
     const parsedTasklistId = Number(tasklistId);
     if (Number.isNaN(parsedTasklistId)) {
       throw new ApiError(400, "Invalid tasklist id");
     }
 
-    const taskList = await prisma.taskList.findUnique({ where: { id: parsedTasklistId } });
+    const taskList = await prisma.taskList.findUnique({
+      where: { id: parsedTasklistId },
+    });
     if (!taskList) {
       throw new ApiError(404, "Task list not found");
     }
 
-    // Moving out of the inbox into a real list: attach tasklist, detach direct user link
-    updateData.taskList = { connect: { id: parsedTasklistId } };
-    updateData.user = { disconnect: true };
+    updateData.taskListId = parsedTasklistId;
+    updateData.userId = null;
   }
 
   const updatedTask = await prisma.task.update({
@@ -153,13 +162,9 @@ const deleteTaskById: RequestHandler = asyncHandler(async (req, res) => {
   if (Number.isNaN(taskId)) {
     throw new ApiError(400, "Invalid task id");
   }
-  const task = await prisma.task.findFirst({
-    where: {
-      id: taskId,
-    },
-  });
+  const task = await prisma.task.findUnique({ where: { id: taskId } });
   if (!task) {
-    throw new ApiError(400, "Task not found");
+    throw new ApiError(404, "Task not found");
   }
 
   const deletedTask = await prisma.task.delete({

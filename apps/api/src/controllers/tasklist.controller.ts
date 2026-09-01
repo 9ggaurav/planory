@@ -196,6 +196,7 @@ const createTask: RequestHandler = asyncHandler(async (req, res) => {
       title,
       isDone: false,
       taskListId: taskListId,
+      userId: null,
       position: maxPosition + 1000,
     },
   });
